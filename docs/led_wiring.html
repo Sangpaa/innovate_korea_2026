@@ -1,0 +1,786 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>2026 Innovate Korea</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;500;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: header, effect simulator, schematic sheet (scrolls sideways on phones), then reference tables in a two-column grid. */
+:root {
+  --bg: #eef1ec;
+  --sheet: #fbfcf9;
+  --fg: #1c2420;
+  --muted: #5a665f;
+  --rule: #c9d1ca;
+  --board: #e3ece6;
+  --board-edge: #2f5d4a;
+  --v5: #c8372d;
+  --v3: #8a4fb8;
+  --gnd: #333b37;
+  --sig: #2b62b0;
+  --ana: #23845a;
+  --vh: #c26a00;
+  --stage: #0c100e;      /* LED simulator background: dark in both themes */
+  --stage-off: #1c2420;
+  --accent: #2b62b0;
+  --font-body: "IBM Plex Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", "Noto Sans KR", sans-serif;
+  --font-mono: "JetBrains Mono", "D2Coding", ui-monospace, Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #111613; --sheet: #171d19; --fg: #dde5df; --muted: #93a29a; --rule: #2e3833;
+    --board: #1d2b24; --board-edge: #6fb393;
+    --v5: #ff6d5e; --v3: #c39bf0; --gnd: #b9c4be; --sig: #70a3f0; --ana: #4fc78e; --vh: #f0a050;
+    --stage: #070a09; --stage-off: #18201c; --accent: #70a3f0;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #111613; --sheet: #171d19; --fg: #dde5df; --muted: #93a29a; --rule: #2e3833;
+  --board: #1d2b24; --board-edge: #6fb393;
+  --v5: #ff6d5e; --v3: #c39bf0; --gnd: #b9c4be; --sig: #70a3f0; --ana: #4fc78e; --vh: #f0a050;
+  --stage: #070a09; --stage-off: #18201c; --accent: #70a3f0;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body {
+  background: var(--bg); color: var(--fg);
+  font-family: var(--font-body); font-size: 15px; line-height: 1.6;
+}
+.wrap {
+  max-width: 1240px; margin: 0 auto;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 28px 56px;
+  display: grid; gap: 28px;
+}
+header { display: grid; gap: 6px; }
+.eyebrow { font-family: var(--font-mono); font-size: 12px; letter-spacing: .08em; color: var(--muted); text-transform: uppercase; }
+h1 { margin: 0; font-size: clamp(24px, 3.4vw, 34px); font-weight: 700; text-wrap: balance; }
+h2 { margin: 0 0 10px; font-size: 19px; font-weight: 700; text-wrap: balance; }
+p { margin: 0; max-width: 72ch; }
+.lede { color: var(--muted); }
+.sheet {
+  background: var(--sheet); border: 1px solid var(--rule); border-radius: 6px;
+  padding: 14px; overflow-x: auto;
+}
+.sheet svg { display: block; width: 100%; min-width: 980px; height: auto; }
+.legend { display: flex; flex-wrap: wrap; gap: 8px 18px; font-size: 13px; color: var(--muted); }
+.legend span { display: inline-flex; align-items: center; gap: 7px; }
+.legend i { display: inline-block; width: 22px; height: 3px; border-radius: 2px; }
+.grid2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 520px), 1fr)); gap: 28px; }
+.grid2 > section { min-width: 0; }
+.wide { grid-column: 1 / -1; }
+.tbl { overflow-x: auto; }
+table { border-collapse: collapse; width: 100%; font-size: 14px; }
+th, td { text-align: left; padding: 7px 10px; border-bottom: 1px solid var(--rule); vertical-align: top; }
+th { font-weight: 500; color: var(--muted); font-size: 13px; }
+td code, li code, p code { font-family: var(--font-mono); font-size: 12.5px; }
+.pin { font-family: var(--font-mono); font-size: 13px; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.num { font-variant-numeric: tabular-nums; white-space: nowrap; }
+.net { display: inline-block; width: 9px; height: 9px; border-radius: 50%; margin-right: 6px; vertical-align: 1px; }
+ul, ol { margin: 0; padding-left: 20px; display: grid; gap: 6px; }
+.warn { color: var(--v5); font-weight: 500; }
+.calc { font-family: var(--font-mono); font-size: 13.5px; background: var(--board); border-radius: 4px; padding: 10px 12px; overflow-x: auto; white-space: pre; }
+.stack { display: grid; gap: 12px; }
+.chg { border-left: 3px solid var(--sig); padding: 2px 0 2px 12px; }
+
+/* Simulator */
+.sim { background: var(--sheet); border: 1px solid var(--rule); border-radius: 6px; padding: 14px; display: grid; gap: 12px; }
+.stage { background: var(--stage); border-radius: 6px; width: 100%; aspect-ratio: 1180 / 300; display: block; }
+.controls { display: flex; flex-wrap: wrap; gap: 10px 18px; align-items: center; font-size: 14px; }
+.controls label { display: inline-flex; align-items: center; gap: 8px; }
+.controls input[type=range] { width: 150px; accent-color: var(--accent); }
+.controls output { font-family: var(--font-mono); font-size: 13px; min-width: 3.5ch; font-variant-numeric: tabular-nums; }
+button.hold {
+  font: inherit; font-weight: 500; padding: 9px 16px; border-radius: 6px; cursor: pointer;
+  border: 1px solid var(--accent); background: transparent; color: var(--fg);
+  touch-action: none; user-select: none; -webkit-user-select: none;
+}
+button.hold.on { background: var(--accent); color: var(--sheet); }
+button.plain { font: inherit; padding: 8px 14px; border-radius: 6px; cursor: pointer; border: 1px solid var(--rule); background: transparent; color: var(--fg); }
+.hint { font-size: 13px; color: var(--muted); }
+
+/* SVG schematic styling (all colours from tokens) */
+.blk { fill: var(--sheet); stroke: var(--fg); stroke-width: 1.4; }
+.grp { fill: none; stroke: var(--muted); stroke-width: 1.2; stroke-dasharray: 6 4; }
+.nuc { fill: var(--board); stroke: var(--board-edge); stroke-width: 2; }
+.strip { fill: var(--sheet); stroke: var(--fg); stroke-width: 1.2; }
+.rled { fill: var(--sig); opacity: .55; }
+.t { fill: var(--fg); font-family: var(--font-mono); font-size: 11.5px; }
+.ts { fill: var(--muted); font-family: var(--font-mono); font-size: 10px; }
+.th { fill: var(--fg); font-family: var(--font-body); font-size: 14px; font-weight: 700; }
+.tk { fill: var(--muted); font-family: var(--font-body); font-size: 11px; }
+.w { fill: none; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+.w5 { stroke: var(--v5); } .w3 { stroke: var(--v3); } .wg { stroke: var(--gnd); }
+.ws { stroke: var(--sig); } .wa { stroke: var(--ana); } .wh { stroke: var(--vh); }
+.dash { stroke-dasharray: 5 4; }
+.d5 { fill: var(--v5); } .d3 { fill: var(--v3); } .dg { fill: var(--gnd); } .ds { fill: var(--sig); }
+.sym { fill: none; stroke: var(--fg); stroke-width: 1.6; }
+.symfill { fill: var(--sheet); stroke: var(--fg); stroke-width: 1.6; }
+.nc { stroke: var(--v5); stroke-width: 2; }
+</style>
+
+<div class="wrap">
+  <header>
+    <div class="eyebrow">innovate_korea_2026 · emg_pmmg_led_F446 · rev 8 · 2026-11-04</div>
+    <h1>EMG·pMMG LED 배선도</h1>
+    <p class="lede">NUCLEO-F446RE 하나에 PSL-iEMG2 두 개(왼팔·오른팔), pMMG 센서, 팔마다 WS2812 2줄(144구씩, 1 m), pMMG용 아크 리액터(WS2812 링 24·16·12·8구 동심원)를 연결합니다. 핀 번호는 현재 펌웨어(<code>firmware/emg_pmmg_led_F446</code>)와 같습니다.</p>
+  </header>
+
+  <section class="chg">
+    <p><b>rev 8 변경점:</b> 팔 4줄 × 72구(0.5 m) → <b>2줄 × 144구(1 m)</b>. 팔당 LED 수(288구)와 전체 수(636구)는 같습니다. 1 m 줄은 끝 전압이 크게 떨어지므로 줄 끝 5V·GND 보강을 <b>필수</b>로 바꾸고 회로도에 보강선을 그렸습니다. <span class="warn">펌웨어 변경 필요:</span> <code>ws2812.h</code>의 <code>WS2812_ARM_STRIPS</code> 4 → 2, <code>WS2812_LEDS_PER_STRIP</code> 72 → 144.</p>
+    <p><b>rev 7:</b> 강압 모듈 P2957(품절) → <b>300W 20A CC/CV 가변 강압 모듈</b>(쿠팡, 구매 완료). 출력이 가변이라 처음에 CV를 5.0 V로 맞춥니다. 아래 "강압 모듈 처음 설정" 참고 · rev 6: 아크 리액터 → pMMG <b>심박</b> 효과(박동마다 중심에서 퍼지는 섬광, BPM에 따라 색) · rev 5: 팔 4줄 × 72구, 아크 리액터 링 24+16+12+8, Pixel Shifter, 보조배터리 전원, 줄 끝 5V·GND 보강</p>
+  </section>
+
+  <section class="sim" aria-labelledby="sim-h">
+    <h2 id="sim-h" style="margin:0">효과 미리보기</h2>
+    <p class="hint">펌웨어 <code>fx.c</code>와 같은 규칙으로 움직이는 시뮬레이션입니다. 버튼을 누르고 있는 동안 그 팔에 힘을 주는 것으로 봅니다. "맥박 감지"를 켜면 심박수 슬라이더 속도로 박동이 들어옵니다. 키보드 <b>A</b>(왼팔), <b>L</b>(오른팔)도 됩니다. 실제 LED 밝기와 색감은 다를 수 있습니다.</p>
+    <canvas class="stage" id="stage" width="1180" height="300" aria-label="왼팔·오른팔 게이지와 아크 리액터 시뮬레이션"></canvas>
+    <div class="controls">
+      <button class="hold" id="holdL" type="button">왼팔 힘주기 (A)</button>
+      <button class="hold" id="holdR" type="button">오른팔 힘주기 (L)</button>
+      <label>힘 세기 <input type="range" id="force" min="0.1" max="1" step="0.05" value="0.6"><output id="forceOut">0.60</output></label>
+      <label><input type="checkbox" id="pulse" checked> 맥박 감지</label>
+      <label>심박수 <input type="range" id="bpm" min="40" max="160" step="1" value="72"><output id="bpmOut">72</output> BPM</label>
+      <label>게이지 경로
+        <select id="layout"><option value="0">병렬: 2줄이 함께 (기본)</option><option value="1">순차: 줄 1 → 줄 2</option></select>
+      </label>
+      <button class="plain" id="b1" type="button">B1 (기준값 다시 측정)</button>
+    </div>
+  </section>
+
+  <section class="grid2">
+    <section>
+      <h2>게이지 동작</h2>
+      <div class="tbl">
+        <table>
+          <thead><tr><th>상황</th><th>표시</th></tr></thead>
+          <tbody>
+            <tr><td>힘을 줌 (EMG 레벨 ≥ 0.10)</td><td>게이지가 차오릅니다. 레벨 1이면 3초, 약하게 주면 약 6초에 가득 찹니다.</td></tr>
+            <tr><td>차오르는 중</td><td>초록 → 노랑 → 빨강 → 자홍 그라데이션. 에너지 물결이 머리 쪽으로 흐르고, 머리는 하얗게 빛나고, 반짝임이 터집니다.</td></tr>
+            <tr><td>100 %</td><td>흰색 섬광 0.4초 후 무지개가 흐릅니다. 힘을 주는 동안 유지됩니다.</td></tr>
+            <tr><td>힘을 뺌</td><td>0.4초 유지 후 1.5초에 걸쳐 빠집니다.</td></tr>
+            <tr><td>쉬는 중</td><td>빈 칸이 희미하게 숨 쉬듯 빛납니다.</td></tr>
+            <tr><td>기준값 측정 (부팅, B1)</td><td>파란 점이 팔을 따라 움직입니다. 이 2초 동안 힘을 빼야 합니다.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="lede" style="margin-top:10px">시간·색·임계값은 <code>Core/Inc/fx.h</code>에서 바꿉니다.</p>
+    </section>
+    <section>
+      <h2>아크 리액터 동작 (pMMG J1 심박)</h2>
+      <div class="tbl">
+        <table>
+          <thead><tr><th>상황</th><th>표시</th></tr></thead>
+          <tbody>
+            <tr><td>박동 1회</td><td>중심(8구)이 번쩍이고, 섬광이 약 0.16초 동안 바깥 링으로 퍼집니다(쿵). 박동 간격의 30 % 뒤에 약한 두 번째 섬광이 이어집니다(쾅). 섬광의 정점에서 중심이 하얘집니다.</td></tr>
+            <tr><td>색</td><td>심박수를 따릅니다: 60 BPM 청록 → 90 BPM 보라 → 120 BPM 이상 빨강.</td></tr>
+            <tr><td>박동 사이</td><td>희미한 혜성이 링마다 돕니다. 이웃한 링은 반대 방향으로 돌고, 속도는 심박수를 따릅니다.</td></tr>
+            <tr><td>맥박 찾는 중</td><td>규칙적인 박동이 3번 들어오기 전에는 섬광이 약합니다. 박동이 2.5초 동안 없으면 천천히 숨 쉬듯 희미하게 빛납니다.</td></tr>
+            <tr><td>기준값 측정</td><td>전체가 파랗게 숨 쉽니다.</td></tr>
+            <tr><td>센서 데이터 없음</td><td>바깥 링의 첫 LED가 빨갛게 깜빡입니다.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="lede" style="margin-top:10px">심박 검출: 접촉 압력과 호흡을 걸러 낸 다음, 수축기에 압력이 가장 가파르게 오르는 순간을 박동으로 셉니다. BPM은 최근 5개 간격의 중앙값입니다. 실제 신호에 맞춘 조정은 <code>pmmg_light.h</code>의 <code>PMMG_PULSE_MIN_PA</code>로 합니다. 링 연결 순서: 바깥 24구 → 16구 → 12구 → 안쪽 8구.</p>
+    </section>
+  </section>
+
+  <section class="stack">
+    <h2 style="margin:0">회로도</h2>
+    <div class="legend" aria-label="선 색 범례">
+      <span><i style="background:var(--vh)"></i>20 V</span>
+      <span><i style="background:var(--v5)"></i>5 V</span>
+      <span><i style="background:var(--v3)"></i>3.3 V</span>
+      <span><i style="background:var(--gnd)"></i>GND</span>
+      <span><i style="background:var(--sig)"></i>디지털 신호</span>
+      <span><i style="background:var(--ana)"></i>아날로그 신호</span>
+      <span>● 점이 있는 곳만 연결, 점 없는 교차는 연결 아님</span>
+    </div>
+    <div class="sheet">
+      <svg viewBox="0 0 1200 760" role="img" aria-labelledby="sch-title">
+        <title id="sch-title">전체 회로: PSL-iEMG2 두 개 → A0·A1, MS5607 → SPI1 + PC8, PB6·PB7·PB8 → Pixel Shifter 2개 → 왼팔 2줄, 오른팔 2줄(각 144구), 아크 리액터(동심원 링 4개), PD 보조배터리 → 트리거 → 5 V 강압 모듈 하나가 LED와 Nucleo E5V에 전원</title>
+
+        <!-- PC -->
+        <rect class="blk" x="445" y="20" width="150" height="50" rx="4"/>
+        <text class="th" x="520" y="42" text-anchor="middle">PC</text>
+        <text class="ts" x="520" y="59" text-anchor="middle">pMMG 스트림 수신</text>
+        <path class="w wg dash" d="M520 70 V120"/>
+        <text class="ts" x="530" y="96">USB (선택)</text>
+
+        <!-- NUCLEO -->
+        <rect class="nuc" x="400" y="120" width="240" height="590" rx="8"/>
+        <text class="th" x="520" y="142" text-anchor="middle">NUCLEO-F446RE</text>
+        <text class="t" x="410" y="169">A0 · PA0</text>
+        <text class="t" x="410" y="194">5V (출력)</text>
+        <text class="t" x="410" y="219">GND</text>
+        <text class="t" x="410" y="279">A1 · PA1</text>
+        <text class="ts" x="410" y="292">ADC1 IN0·IN1 스캔</text>
+        <text class="t" x="410" y="404">3V3</text>
+        <text class="t" x="410" y="434">D3 · PB3</text>
+        <text class="t" x="410" y="464">D5 · PB4</text>
+        <text class="t" x="410" y="494">D4 · PB5</text>
+        <text class="t" x="410" y="524">PC8 · CN10-2</text>
+        <text class="t" x="410" y="554">GND</text>
+        <text class="ts" x="410" y="576">SPI1 (SCK·MISO·MOSI)</text>
+        <text class="t" x="410" y="604">D6 · PB10</text>
+        <text class="t" x="630" y="204" text-anchor="end">D10 · PB6</text>
+        <text class="ts" x="630" y="217" text-anchor="end">TIM4 CH1</text>
+        <text class="t" x="630" y="414" text-anchor="end">PB7 · CN7-21</text>
+        <text class="ts" x="630" y="427" text-anchor="end">TIM4 CH2</text>
+        <text class="t" x="630" y="624" text-anchor="end">D15 · PB8</text>
+        <text class="ts" x="630" y="637" text-anchor="end">TIM4 CH3</text>
+        <text class="t" x="630" y="694" text-anchor="end">GND</text>
+
+        <!-- PSL-iEMG2 left -->
+        <rect class="blk" x="60" y="140" width="210" height="92" rx="4"/>
+        <text class="th" x="75" y="162">PSL-iEMG2</text>
+        <text class="tk" x="75" y="180">왼팔 전극</text>
+        <text class="t" x="260" y="169" text-anchor="end">Ch2 ENV</text>
+        <text class="t" x="260" y="194" text-anchor="end">5V</text>
+        <text class="t" x="260" y="219" text-anchor="end">GND</text>
+        <!-- PSL-iEMG2 right -->
+        <rect class="blk" x="60" y="250" width="210" height="92" rx="4"/>
+        <text class="th" x="75" y="272">PSL-iEMG2</text>
+        <text class="tk" x="75" y="290">오른팔 전극</text>
+        <text class="t" x="260" y="279" text-anchor="end">Ch2 ENV</text>
+        <text class="t" x="260" y="304" text-anchor="end">5V</text>
+        <text class="t" x="260" y="329" text-anchor="end">GND</text>
+        <text class="tk" x="165" y="358" text-anchor="middle">Ch1 RAW는 두 보드 모두 미연결</text>
+
+        <path class="w wa" d="M270 165 H400"/>
+        <text class="ts" x="300" y="158">envelope</text>
+        <path class="w wa" d="M270 275 H400"/>
+        <path class="w w5" d="M270 190 H400"/>
+        <path class="w wg" d="M270 215 H400"/>
+        <path class="w w5" d="M270 300 H340 V190"/>
+        <circle class="d5" cx="340" cy="190" r="3.6"/>
+        <path class="w wg" d="M270 325 H365 V215"/>
+        <circle class="dg" cx="365" cy="215" r="3.6"/>
+
+        <!-- pMMG sensor J1 -->
+        <rect class="blk" x="60" y="380" width="210" height="185" rx="4"/>
+        <text class="th" x="75" y="404">pMMG 센서 J1</text>
+        <text class="tk" x="75" y="422">MS5607 모듈</text>
+        <text class="tk" x="75" y="452">PS 핀 → GND (SPI)</text>
+        <text class="tk" x="75" y="468">100 nF: 없으면 추가</text>
+        <text class="t" x="260" y="404" text-anchor="end">VDD</text>
+        <text class="t" x="260" y="434" text-anchor="end">SCLK</text>
+        <text class="t" x="260" y="464" text-anchor="end">SDO</text>
+        <text class="t" x="260" y="494" text-anchor="end">SDI</text>
+        <text class="t" x="260" y="524" text-anchor="end">CSB</text>
+        <text class="t" x="260" y="554" text-anchor="end">GND</text>
+        <path class="w w3" d="M270 400 H400"/><text class="ts" x="335" y="393" text-anchor="middle">3.3 V</text>
+        <path class="w ws" d="M270 430 H400"/><text class="ts" x="335" y="423" text-anchor="middle">SCK</text>
+        <path class="w ws" d="M270 460 H400"/><text class="ts" x="335" y="453" text-anchor="middle">MISO ←</text>
+        <path class="w ws" d="M270 490 H400"/><text class="ts" x="335" y="483" text-anchor="middle">MOSI</text>
+        <path class="w ws" d="M270 520 H400"/><text class="ts" x="335" y="513" text-anchor="middle">CS1</text>
+        <path class="w wg" d="M270 550 H400"/>
+        <text class="tk" x="165" y="583" text-anchor="middle">J2–J11 연결은 아래 표</text>
+        <text class="ts" x="70" y="604">XM DIO4 (선택)</text>
+        <path class="w ws dash" d="M180 600 H392"/>
+        <path class="ds" d="M400 600 l-8 -4 v8 z"/>
+
+        <!-- Battery power chain: PD power bank -> PD trigger -> 5 V buck, then buses -->
+        <rect class="blk" x="612" y="20" width="108" height="72" rx="4"/>
+        <text class="th" x="666" y="42" text-anchor="middle">PD 보조배터리</text>
+        <text class="ts" x="666" y="62" text-anchor="middle">Coms UB459</text>
+        <text class="ts" x="666" y="78" text-anchor="middle">C1/C2 포트</text>
+        <path class="w wh" d="M720 56 H742" style="stroke-width:4"/>
+        <text class="ts" x="731" y="108" text-anchor="middle">USB-C</text>
+        <rect class="blk" x="742" y="20" width="96" height="72" rx="4"/>
+        <text class="th" x="790" y="42" text-anchor="middle">PD 트리거</text>
+        <text class="ts" x="790" y="62" text-anchor="middle">HPRO-0006</text>
+        <text class="ts" x="790" y="78" text-anchor="middle">20 V 고정</text>
+        <path class="w wh" d="M838 46 H860"/>
+        <path class="w wg" d="M838 74 H860"/>
+        <rect class="blk" x="860" y="20" width="130" height="72" rx="4"/>
+        <text class="th" x="925" y="42" text-anchor="middle">강압 DC-DC</text>
+        <text class="ts" x="925" y="60" text-anchor="middle">300W 20A CC/CV</text>
+        <text class="ts" x="925" y="73" text-anchor="middle">CV → 5.0 V</text>
+        <text class="ts" x="872" y="86">+5V</text>
+        <text class="ts" x="928" y="86">GND</text>
+        <path class="w w5" d="M880 92 V644"/>
+        <path class="w wg" d="M920 92 V694"/>
+        <text class="tk" x="1000" y="36">배터리 하나로 전체 전원</text>
+        <text class="ts" x="1000" y="56">주황 = 20 V</text>
+        <text class="ts" x="1000" y="72">LED 연결 전 CV를</text>
+        <text class="ts" x="1000" y="86">멀티미터로 5.0 V에 맞춤</text>
+        <text class="ts" x="1000" y="106">각 팔·링·Nucleo 선 따로</text>
+
+        <!-- Nucleo power from the 5 V bus through E5V -->
+        <path class="w w5" d="M880 150 H640"/>
+        <circle class="d5" cx="880" cy="150" r="3.6"/>
+        <text class="t" x="630" y="154" text-anchor="end">E5V · CN7-6</text>
+        <text class="ts" x="630" y="168" text-anchor="end">JP5 → E5V</text>
+
+        <!-- PS1 / PS2: Adafruit Pixel Shifter, 3.3 V -> 5 V data -->
+        <rect class="blk" x="680" y="180" width="95" height="255" rx="4"/>
+        <text class="th" x="727" y="300" text-anchor="middle">PS1</text>
+        <text class="ts" x="727" y="316" text-anchor="middle">Pixel</text>
+        <text class="ts" x="727" y="329" text-anchor="middle">Shifter</text>
+        <text class="ts" x="686" y="197">DAT</text>
+        <text class="ts" x="686" y="244">V</text>
+        <text class="ts" x="686" y="384">G</text>
+        <text class="ts" x="686" y="407">CLK</text>
+        <text class="ts" x="769" y="197" text-anchor="end">D5</text>
+        <text class="ts" x="769" y="407" text-anchor="end">C5</text>
+        <rect class="blk" x="680" y="565" width="95" height="100" rx="4"/>
+        <text class="th" x="740" y="600" text-anchor="middle">PS2</text>
+        <text class="ts" x="686" y="584">V</text>
+        <text class="ts" x="686" y="617">DAT</text>
+        <text class="ts" x="686" y="654">G</text>
+        <text class="ts" x="769" y="617" text-anchor="end">D5</text>
+        <path class="w ws" d="M640 200 H680"/>
+        <path class="w ws" d="M640 410 H680"/>
+        <path class="w ws" d="M640 620 H680"/>
+        <path class="w w3" d="M640 240 H680"/>
+        <circle class="d3" cx="665" cy="240" r="3.6"/>
+        <path class="w w3" d="M665 240 V580 H680"/>
+        <text class="t" x="630" y="244" text-anchor="end">3V3 · CN6-4</text>
+        <path class="w wg" d="M680 380 H652 V690"/>
+        <path class="w wg" d="M680 650 H652"/>
+        <circle class="dg" cx="652" cy="650" r="3.6"/>
+        <circle class="dg" cx="652" cy="690" r="3.6"/>
+
+        <!-- R1-R3 -->
+        <path class="w ws" d="M775 200 H790"/>
+        <polyline class="sym" points="790,200 794,200 797,193 803,207 809,193 815,207 821,193 827,207 830,200 834,200"/>
+        <text class="ts" x="812" y="185" text-anchor="middle">R1 330 Ω</text>
+        <path class="w ws" d="M834 200 H990"/>
+        <path class="w ws" d="M775 410 H790"/>
+        <polyline class="sym" points="790,410 794,410 797,403 803,417 809,403 815,417 821,403 827,417 830,410 834,410"/>
+        <text class="ts" x="812" y="395" text-anchor="middle">R2 330 Ω</text>
+        <path class="w ws" d="M834 410 H990"/>
+        <path class="w ws" d="M775 620 H790"/>
+        <polyline class="sym" points="790,620 794,620 797,613 803,627 809,613 815,627 821,613 827,627 830,620 834,620"/>
+        <text class="ts" x="812" y="605" text-anchor="middle">R3 330 Ω</text>
+        <path class="w ws" d="M834 620 H990"/>
+
+        <!-- Left arm: strip 1 end feed goes over the top, strip 2 end feed goes under the bottom -->
+        <rect class="grp" x="955" y="160" width="225" height="185" rx="6"/>
+        <text class="ts" x="964" y="177">왼팔 · 2줄 × 144구 (1 m)</text>
+        <path class="w w5" d="M880 172 H894"/><path class="sym" d="M897 163 V181 M904 163 V181"/><path class="w wg" d="M907 172 H920"/>
+        <circle class="d5" cx="880" cy="172" r="3.6"/><circle class="dg" cx="920" cy="172" r="3.6"/>
+        <text class="ts" x="845" y="166" text-anchor="end">C1</text>
+        <g>
+          <rect class="strip" x="990" y="193" width="160" height="33" rx="3"/>
+          <text class="ts" x="995" y="203">DIN</text>
+          <text class="ts" x="1145" y="219" text-anchor="end">DOUT</text>
+          <text class="t" x="1075" y="212" text-anchor="middle">줄 1</text>
+          <path class="w w5" d="M880 210 H990"/><circle class="d5" cx="880" cy="210" r="3.6"/>
+          <path class="w wg" d="M920 219 H990"/><circle class="dg" cx="920" cy="219" r="3.6"/>
+          <path class="w w5" d="M1150 196 H1160 V188 H880"/><circle class="d5" cx="880" cy="188" r="3.6"/>
+          <path class="w wg" d="M1150 204 H1168 V182 H920"/><circle class="dg" cx="920" cy="182" r="3.6"/>
+          <path class="w ws" d="M1150 216 H1165 V234 H975 V252 H990"/>
+        </g>
+        <g>
+          <rect class="strip" x="990" y="242" width="160" height="36" rx="3"/>
+          <text class="ts" x="995" y="255">DIN</text>
+          <text class="ts" x="1145" y="271" text-anchor="end">끝</text>
+          <text class="t" x="1075" y="264" text-anchor="middle">줄 2</text>
+          <path class="w w5" d="M880 262 H990"/><circle class="d5" cx="880" cy="262" r="3.6"/>
+          <path class="w wg" d="M920 270 H990"/><circle class="dg" cx="920" cy="270" r="3.6"/>
+          <path class="w w5" d="M1150 250 H1168 V296 H880"/><circle class="d5" cx="880" cy="296" r="3.6"/>
+          <path class="w wg" d="M1150 260 H1160 V290 H920"/><circle class="dg" cx="920" cy="290" r="3.6"/>
+          <text class="tk" x="1075" y="316" text-anchor="middle">줄 1 DOUT → 줄 2 DIN (데이터)</text>
+          <text class="tk" x="1075" y="332" text-anchor="middle">줄마다 양 끝에 5V·GND</text>
+        </g>
+
+        <!-- Right arm: strip 1 end feed goes over the top, strip 2 end feed goes under the bottom -->
+        <rect class="grp" x="955" y="370" width="225" height="185" rx="6"/>
+        <text class="ts" x="964" y="387">오른팔 · 2줄 × 144구 (1 m)</text>
+        <path class="w w5" d="M880 382 H894"/><path class="sym" d="M897 373 V391 M904 373 V391"/><path class="w wg" d="M907 382 H920"/>
+        <circle class="d5" cx="880" cy="382" r="3.6"/><circle class="dg" cx="920" cy="382" r="3.6"/>
+        <text class="ts" x="845" y="376" text-anchor="end">C2</text>
+        <g>
+          <rect class="strip" x="990" y="403" width="160" height="33" rx="3"/>
+          <text class="ts" x="995" y="413">DIN</text>
+          <text class="ts" x="1145" y="429" text-anchor="end">DOUT</text>
+          <text class="t" x="1075" y="422" text-anchor="middle">줄 1</text>
+          <path class="w w5" d="M880 420 H990"/><circle class="d5" cx="880" cy="420" r="3.6"/>
+          <path class="w wg" d="M920 429 H990"/><circle class="dg" cx="920" cy="429" r="3.6"/>
+          <path class="w w5" d="M1150 406 H1160 V398 H880"/><circle class="d5" cx="880" cy="398" r="3.6"/>
+          <path class="w wg" d="M1150 414 H1168 V392 H920"/><circle class="dg" cx="920" cy="392" r="3.6"/>
+          <path class="w ws" d="M1150 426 H1165 V444 H975 V462 H990"/>
+        </g>
+        <g>
+          <rect class="strip" x="990" y="452" width="160" height="36" rx="3"/>
+          <text class="ts" x="995" y="465">DIN</text>
+          <text class="ts" x="1145" y="481" text-anchor="end">끝</text>
+          <text class="t" x="1075" y="474" text-anchor="middle">줄 2</text>
+          <path class="w w5" d="M880 472 H990"/><circle class="d5" cx="880" cy="472" r="3.6"/>
+          <path class="w wg" d="M920 480 H990"/><circle class="dg" cx="920" cy="480" r="3.6"/>
+          <path class="w w5" d="M1150 460 H1168 V506 H880"/><circle class="d5" cx="880" cy="506" r="3.6"/>
+          <path class="w wg" d="M1150 470 H1160 V500 H920"/><circle class="dg" cx="920" cy="500" r="3.6"/>
+          <text class="tk" x="1075" y="526" text-anchor="middle">줄 1 DOUT → 줄 2 DIN (데이터)</text>
+          <text class="tk" x="1075" y="542" text-anchor="middle">줄마다 양 끝에 5V·GND</text>
+        </g>
+
+        <!-- Ring -->
+        <text class="ts" x="964" y="580">아크 리액터 · 24+16+12+8구</text>
+        <path class="w w5" d="M880 595 H894"/><path class="sym" d="M897 586 V604 M904 586 V604"/><path class="w wg" d="M907 595 H920"/>
+        <circle class="d5" cx="880" cy="595" r="3.6"/><circle class="dg" cx="920" cy="595" r="3.6"/>
+        <text class="ts" x="845" y="589" text-anchor="end">C3</text>
+        <rect class="blk" x="990" y="600" width="190" height="96" rx="4"/>
+        <text class="t" x="998" y="624">DIN</text>
+        <text class="t" x="998" y="648">5V</text>
+        <text class="t" x="998" y="672">GND</text>
+        <path class="w w5" d="M880 644 H990"/><circle class="d5" cx="880" cy="644" r="3.6"/>
+        <path class="w wg" d="M920 668 H990"/><circle class="dg" cx="920" cy="668" r="3.6"/>
+        <circle class="rled" cx="1122.0" cy="614.0" r="3.0"/><circle class="rled" cx="1130.8" cy="615.2" r="3.0"/><circle class="rled" cx="1139.0" cy="618.6" r="3.0"/><circle class="rled" cx="1146.0" cy="624.0" r="3.0"/><circle class="rled" cx="1151.4" cy="631.0" r="3.0"/><circle class="rled" cx="1154.8" cy="639.2" r="3.0"/><circle class="rled" cx="1156.0" cy="648.0" r="3.0"/><circle class="rled" cx="1154.8" cy="656.8" r="3.0"/><circle class="rled" cx="1151.4" cy="665.0" r="3.0"/><circle class="rled" cx="1146.0" cy="672.0" r="3.0"/><circle class="rled" cx="1139.0" cy="677.4" r="3.0"/><circle class="rled" cx="1130.8" cy="680.8" r="3.0"/><circle class="rled" cx="1122.0" cy="682.0" r="3.0"/><circle class="rled" cx="1113.2" cy="680.8" r="3.0"/><circle class="rled" cx="1105.0" cy="677.4" r="3.0"/><circle class="rled" cx="1098.0" cy="672.0" r="3.0"/><circle class="rled" cx="1092.6" cy="665.0" r="3.0"/><circle class="rled" cx="1089.2" cy="656.8" r="3.0"/><circle class="rled" cx="1088.0" cy="648.0" r="3.0"/><circle class="rled" cx="1089.2" cy="639.2" r="3.0"/><circle class="rled" cx="1092.6" cy="631.0" r="3.0"/><circle class="rled" cx="1098.0" cy="624.0" r="3.0"/><circle class="rled" cx="1105.0" cy="618.6" r="3.0"/><circle class="rled" cx="1113.2" cy="615.2" r="3.0"/><circle class="rled" cx="1122.0" cy="623.0" r="2.6"/><circle class="rled" cx="1131.6" cy="624.9" r="2.6"/><circle class="rled" cx="1139.7" cy="630.3" r="2.6"/><circle class="rled" cx="1145.1" cy="638.4" r="2.6"/><circle class="rled" cx="1147.0" cy="648.0" r="2.6"/><circle class="rled" cx="1145.1" cy="657.6" r="2.6"/><circle class="rled" cx="1139.7" cy="665.7" r="2.6"/><circle class="rled" cx="1131.6" cy="671.1" r="2.6"/><circle class="rled" cx="1122.0" cy="673.0" r="2.6"/><circle class="rled" cx="1112.4" cy="671.1" r="2.6"/><circle class="rled" cx="1104.3" cy="665.7" r="2.6"/><circle class="rled" cx="1098.9" cy="657.6" r="2.6"/><circle class="rled" cx="1097.0" cy="648.0" r="2.6"/><circle class="rled" cx="1098.9" cy="638.4" r="2.6"/><circle class="rled" cx="1104.3" cy="630.3" r="2.6"/><circle class="rled" cx="1112.4" cy="624.9" r="2.6"/><circle class="rled" cx="1122.0" cy="631.0" r="2.4"/><circle class="rled" cx="1130.5" cy="633.3" r="2.4"/><circle class="rled" cx="1136.7" cy="639.5" r="2.4"/><circle class="rled" cx="1139.0" cy="648.0" r="2.4"/><circle class="rled" cx="1136.7" cy="656.5" r="2.4"/><circle class="rled" cx="1130.5" cy="662.7" r="2.4"/><circle class="rled" cx="1122.0" cy="665.0" r="2.4"/><circle class="rled" cx="1113.5" cy="662.7" r="2.4"/><circle class="rled" cx="1107.3" cy="656.5" r="2.4"/><circle class="rled" cx="1105.0" cy="648.0" r="2.4"/><circle class="rled" cx="1107.3" cy="639.5" r="2.4"/><circle class="rled" cx="1113.5" cy="633.3" r="2.4"/><circle class="rled" cx="1122.0" cy="639.0" r="2.0"/><circle class="rled" cx="1128.4" cy="641.6" r="2.0"/><circle class="rled" cx="1131.0" cy="648.0" r="2.0"/><circle class="rled" cx="1128.4" cy="654.4" r="2.0"/><circle class="rled" cx="1122.0" cy="657.0" r="2.0"/><circle class="rled" cx="1115.6" cy="654.4" r="2.0"/><circle class="rled" cx="1113.0" cy="648.0" r="2.0"/><circle class="rled" cx="1115.6" cy="641.6" r="2.0"/>
+        <text class="ts" x="1085" y="712" text-anchor="middle">DIN → 바깥 24 → 16 → 12 → 안쪽 8</text>
+        <text class="ts" x="1085" y="728" text-anchor="middle">C1–C3 = 1000 µF, 각 입력단에</text>
+
+        <!-- common GND from Nucleo -->
+        <path class="w wg" d="M640 690 H920"/>
+        <circle class="dg" cx="920" cy="690" r="3.6"/>
+        <text class="ts" x="790" y="704" text-anchor="middle">공통 GND (선 1개)</text>
+      </svg>
+    </div>
+  </section>
+
+  <div class="grid2">
+    <section>
+      <h2>전원: 보조배터리 하나</h2>
+      <div class="stack">
+        <p><b>확정: Coms UB459 → 20 V PD 트리거 → 300W 20A CC/CV 강압 모듈(5.0 V로 설정).</b> 보조배터리의 USB-C 5 V 출력은 2.4 A가 상한입니다. 그래서 20 V로 꺼낸 다음 5 V로 내립니다.</p>
+        <div class="calc">LED 수: 2팔 × 2줄 × 144 + 링 60 = 636개
+최악 (흰색, 밝기 상한 128): 636 × 60 mA × 128/255 ≈ 19 A
+펌웨어 전류 제한 (색 전류):
+  팔마다 3.5 A (WS2812_ARM_LIMIT_MA)
+  아크 리액터 1.8 A (WS2812_RING_LIMIT_MA)
+  전체 8 A (WS2812_POWER_LIMIT_MA)
+대기 전류: 636 × 약 1 mA ≈ 0.6 A
+→ 팔 하나 최대 약 3.8 A (5 A 퓨즈의 80 % 안)
+→ 전체 최대 약 8.6 A (43 W)
+→ 트리거 입력 약 43 W ÷ 0.9 ÷ 20 V ≈ 2.4 A
+
+UB459 C1/C2: 20 V 5 A (100 W)
+강압 모듈: 입력 6–40 V, 출력 1.2–36 V 가변, 표기 20 A (300 W)
+  표기 20 A는 최대값으로 봄. 방열판만으로 연속 약 10–12 A (추정)
+  → 최대 8.6 A는 범위 안. 여유는 작으니 온도를 확인
+20000 mAh ≈ 55 Wh 사용 (추정)
+→ 평균 7.5 W면 약 7시간, 20 W면 약 2.7시간, 최대 43 W면 약 1.3시간</div>
+        <div class="tbl">
+          <table>
+            <thead><tr><th>이유</th><th>설명</th></tr></thead>
+            <tbody>
+              <tr><td>안전</td><td>EMG 전극이 피부에 붙고, GND가 LED 전원까지 이어집니다. 배터리는 콘센트와 연결되지 않습니다.</td></tr>
+              <tr><td>EMG 잡음</td><td>어댑터의 스위칭 잡음과 60 Hz 험이 들어오지 않습니다.</td></tr>
+              <tr><td>움직임</td><td>벽까지 이어지는 선이 없습니다.</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <ul>
+          <li><span class="warn">LED를 연결하기 전에</span> 트리거 출력(20 V)과 강압 출력(5 V)을 멀티미터로 잽니다. 20 V가 LED에 바로 들어가면 LED가 탑니다.</li>
+          <li>보조배터리의 <b>C1 또는 C2</b> 포트를 씁니다. USB-A 포트는 20 V를 내지 않습니다.</li>
+          <li><b>PD 트리거(HPRO-0006)의 전류 정격을 확인합니다.</b> 최대일 때 20 V에서 약 2.4 A가 흐릅니다. 3 A 이상이면 됩니다.</li>
+          <li><b>열:</b> 1 m(144구) 줄 하나는 흰색 밝기 상한 128에서 최대 약 4.3 A(22 W)입니다. 펌웨어가 팔당 3.5 A로 제한하므로 실제로는 줄당 약 1.9 A(9 W)까지입니다. 밝게 켠 채 몇 분 뒤 손으로 온도를 확인하세요. 스트립과 피부 사이에는 천이나 실리콘 커버를 둡니다.</li>
+          <li>팔당 5 A 이상으로 올리려면 퓨즈를 AUTO-FUSE 10A로, 팔 전원선을 AWG 18로 바꾸고 줄 끝 5V·GND 보강을 반드시 합니다.</li>
+                    <li>시연 중에는 노트북 충전기를 뺍니다. Nucleo USB를 충전 중인 노트북에 꽂으면 콘센트 경로가 다시 생깁니다.</li>
+        </ul>
+        <h3 style="margin:6px 0 0;font-size:16px">강압 모듈 처음 설정 (CC/CV 가변)</h3>
+        <p><b>조건:</b> 받은 직후 모듈의 출력 전압은 알 수 없습니다. LED와 Nucleo를 연결하기 전에 반드시 아래 순서로 맞춥니다.</p>
+        <ol>
+          <li>모듈 출력(OUT)에 아무것도 연결하지 않습니다.</li>
+          <li>PD 트리거의 20 V 출력을 모듈 입력(IN+, IN−)에 연결합니다. 극성을 확인합니다.</li>
+          <li>멀티미터를 출력 단자에 댑니다.</li>
+          <li><b>CV</b> 가변저항을 돌려 출력을 <b>5.0 V</b>에 맞춥니다. 다회전 저항이라 여러 바퀴 돌려야 할 수 있습니다.</li>
+          <li><b>CC</b> 가변저항은 시계 방향 끝까지 돌려 둡니다. 전류 제한이 낮게 걸리면 LED가 밝아질 때 전압이 떨어집니다.</li>
+          <li>입력을 뺐다가 다시 꽂고, 출력이 5.0 V로 다시 나오는지 잽니다.</li>
+          <li>가변저항 위에 테이프나 글루를 붙여 실수로 돌아가지 않게 합니다.</li>
+          <li>LED 줄 1개를 연결해 흰색으로 켜고, 출력이 4.9 V 이상인지 다시 잽니다.</li>
+        </ol>
+        <p class="lede">발열: 밝게 켠 채 5분 뒤 방열판을 손으로 만져 봅니다. 오래 잡고 있기 어려울 만큼 뜨거우면 작은 5 V 팬을 달거나 <code>WS2812_POWER_LIMIT_MA</code>를 낮춥니다. 모듈은 기판이 드러난 형태입니다. 방열판이 금속이므로 다른 단자·선과 닿지 않게 절연된 상자나 받침에 고정합니다.</p>
+        <h3 style="margin:6px 0 0;font-size:16px">줄 끝 5V·GND 보강</h3>
+        <p><b>1 m 줄에서는 필수입니다.</b> 144구/m 스트립은 구리 패턴이 얇습니다. 한쪽 끝에서만 전원을 넣으면 1 m 끝에서 5 V가 크게 떨어집니다. 전압이 떨어지면 파랑·초록이 먼저 약해져서 붉게 보입니다. 양 끝에서 전원을 넣으면 가장 먼 LED까지의 거리가 0.5 m로 줄어듭니다.</p>
+        <ol>
+          <li>각 줄의 마지막 LED 쪽 5V·GND 패드(또는 DOUT 쪽 커넥터의 빨강·검정 선)에 선 한 쌍을 납땜합니다.</li>
+          <li>그 선을 같은 팔의 WAGO 분배점(퓨즈 뒤)으로 가져가 +5V와 GND에 각각 연결합니다.</li>
+          <li>데이터선(DOUT → 다음 줄 DIN)은 그대로 둡니다. 5V·GND만 추가합니다.</li>
+          <li>다시 흰색으로 켜서 줄 처음과 끝의 색이 비슷한지 봅니다. 멀티미터로 줄 가운데(72번째 LED)와 끝의 5V–GND가 4.5 V 이상인지 잽니다.</li>
+          <li>가운데가 4.5 V 아래이거나 붉게 보이면 72번째 LED 근처 패드에도 5V·GND 선을 하나 더 연결합니다.</li>
+        </ol>
+        <p class="lede">회로도에서 줄 1의 보강선은 줄 위로, 줄 2의 보강선은 줄 아래로 돌아가 5V·GND 분배점에 닿습니다. 그래서 데이터선과 겹치지 않습니다. 선은 AWG 20 정도면 됩니다. 4줄 모두 처음부터 연결합니다.</p>
+      </div>
+    </section>
+
+    <section>
+      <h2>구매 목록</h2>
+      <div class="tbl">
+        <table>
+          <thead><tr><th>품목</th><th>수량</th><th>사양·용도</th></tr></thead>
+          <tbody>
+            <tr><td>WS2812B 144구/m RGB 스트립</td><td class="num">4줄 × 1 m = 4 m</td><td>1 m(144구) 줄을 자르지 않고 그대로 씀. 3핀 커넥터가 달린 제품이면 편함</td></tr>
+            <tr><td>WS2812B RGB 링 24·16·12·8구 (SZH-LD088·083·087·086)</td><td class="num">각 1</td><td>아크 리액터. 24구 <a href="https://www.devicemart.co.kr/goods/view?no=1326932">디바이스마트</a>, 준비 2–3일. 링 사이 DOUT→DIN, 5V, GND는 선으로 납땜</td></tr>
+            <tr><td>Coms 보조배터리 UB459</td><td class="num">1 + 예비</td><td>PD 100 W, 20000 mAh. <a href="https://www.devicemart.co.kr/goods/view?no=15815126">디바이스마트</a>, 준비 3–4일</td></tr>
+            <tr><td>USB-C PD 트리거 20 V (HPRO-0006)</td><td class="num">1</td><td><a href="https://www.devicemart.co.kr/goods/view?no=14993942">디바이스마트</a>, 준비 1주</td></tr>
+            <tr><td>300W 20A CC/CV 강압 모듈 (듀얼 방열판)</td><td class="num">1</td><td><b>구매 완료.</b> 입력 6–40 V, 출력 1.2–36 V 가변 → 5.0 V로 설정. <a href="https://www.coupang.com/vp/products/5684277620">쿠팡</a> 15,960원. P2957 품절로 대체</td></tr>
+            <tr><td>USB-C 케이블 100 W (SZH-PDC04)</td><td class="num">1</td><td>20 V 5 A. <a href="https://www.devicemart.co.kr/goods/view?no=14489212">디바이스마트</a>, 준비 1주</td></tr>
+            <tr><td>Adafruit Pixel Shifter (6066)</td><td class="num">2</td><td>회로도 PS1·PS2. 나사 단자, 2채널(DAT→D5, CLK→C5), V는 Nucleo 3V3. <a href="https://www.devicemart.co.kr/goods/view?no=16132934">디바이스마트(DigiKey 경유)</a> 8,349원, 준비 4–5일</td></tr>
+            <tr><td>74HCT125N (DIP) — 예비</td><td class="num">1</td><td>Pixel Shifter가 늦어질 때 대신 씀. <a href="https://www.devicemart.co.kr/goods/view?no=1057573">디바이스마트</a>, 준비 1–2일</td></tr>
+            <tr><td>저항 330 Ω</td><td class="num">3</td><td>데이터선 중간에 납땜 + 수축튜브</td></tr>
+            <tr><td>전해 커패시터 1000 µF 10 V 이상</td><td class="num">3</td><td>각 팔·링 전원 입력의 단자에 다리를 같이 물림</td></tr>
+            <tr><td>WAGO 221-415 (5구)</td><td class="num">8 이상</td><td>5 V·GND 분배, 줄 끝 보강선 포함. 24–12 AWG, 32 A. <a href="https://www.devicemart.co.kr/goods/view?no=10827023">디바이스마트</a>, 준비 2–3일</td></tr>
+            <tr><td>퓨즈 홀더 (오토/ATO 블레이드형)</td><td class="num">3</td><td>강압 모듈 출력 뒤, 왼팔·오른팔·아크 리액터에 하나씩. <a href="https://www.devicemart.co.kr/goods/view?no=1153152">퓨즈홀더 CAR - 캡(유)</a>, 준비 1–2일</td></tr>
+            <tr><td>AUTO-FUSE 32V 5A</td><td class="num">3 + 예비 3</td><td>홀더에 끼우는 표준(오토) 블레이드 퓨즈. 세 곳 모두 5 A. <a href="https://www.devicemart.co.kr/goods/view?no=11509">디바이스마트</a>, 개당 110원</td></tr>
+            <tr><td>전원선 AWG 18–20 (빨강·검정)</td><td class="num">팔당 왕복 길이 + 줄당 약 1.1 m</td><td>강압 모듈 → 각 팔·링·Nucleo E5V, 줄 끝 보강</td></tr>
+            <tr><td>신호선 AWG 22–24</td><td class="num">팔당 길이</td><td>데이터. GND선과 꼬아서 씁니다</td></tr>
+            <tr><td>3핀 JST-SM 피그테일 암수</td><td class="num">3쌍 이상</td><td>팔·링을 떼었다 붙이기</td></tr>
+            <tr><td>일회용 Ag/AgCl 전극</td><td class="num">팔당 3개 × 횟수</td><td>PSL-iEMG2용 소모품</td></tr>
+            <tr><td>IP67 실리콘 엔드캡 (선 구멍 있는 것 + 막힌 것)</td><td class="num">8 + 여분</td><td>스트립은 IP67(실리콘 튜브). 내부 폭은 스트립 실측에 맞춤(144구/m IP67은 보통 12 mm). 스트립 롤에 2개씩 들어 있는지 먼저 확인</td></tr>
+            <tr><td>수축튜브, 벨크로 밴드</td><td class="num">적당량</td><td>절연, 팔에 고정</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="lede" style="margin-top:10px">준비기간은 디바이스마트 페이지의 "평균준비기간"이며, 발송 후 배송에 영업일 1–3일이 더 걸립니다. 영업일 오후 3시 전 결제한 재고 상품은 당일 출고됩니다. 여러 상품을 함께 주문하면 가장 긴 준비기간에 맞춰 보낼 수 있으니, 급한 상품은 따로 주문하세요.</p>
+    </section>
+
+    <section>
+      <h2>Nucleo 핀 연결</h2>
+      <div class="tbl">
+        <table>
+          <thead><tr><th>Nucleo 핀</th><th>연결 대상</th><th>조건</th></tr></thead>
+          <tbody>
+            <tr><td class="pin"><span class="net" style="background:var(--ana)"></span>A0 · PA0</td><td>왼팔 PSL-iEMG2 Ch2</td><td>0–3.3 V</td></tr>
+            <tr><td class="pin"><span class="net" style="background:var(--ana)"></span>A1 · PA1</td><td>오른팔 PSL-iEMG2 Ch2</td><td>0–3.3 V</td></tr>
+            <tr><td class="pin"><span class="net" style="background:var(--v5)"></span>E5V · CN7-6</td><td>강압 모듈 5 V (전용 선 한 쌍)</td><td>JP5를 E5V로. 4.75–5.25 V, 최대 500 mA</td></tr>
+            <tr><td class="pin"><span class="net" style="background:var(--v5)"></span>5V (출력)</td><td>PSL-iEMG2 두 개의 5V</td><td>EMG 보드 전원만</td></tr>
+            <tr><td class="pin"><span class="net" style="background:var(--v3)"></span>3V3</td><td>센서 VDD, PS1·PS2 V</td><td>MS5607은 3.3 V</td></tr>
+            <tr><td class="pin"><span class="net" style="background:var(--sig)"></span>D3·D5·D4, PC8</td><td>센서 SCLK·SDO·SDI·CSB</td><td>SPI1, CS1</td></tr>
+            <tr><td class="pin"><span class="net" style="background:var(--sig)"></span>D10 · PB6</td><td>PS1 DAT</td><td>왼팔 데이터</td></tr>
+            <tr><td class="pin"><span class="net" style="background:var(--sig)"></span>PB7 · CN7-21</td><td>PS1 CLK</td><td>오른팔 데이터</td></tr>
+            <tr><td class="pin"><span class="net" style="background:var(--sig)"></span>D15 · PB8</td><td>PS2 DAT</td><td>아크 리액터 데이터</td></tr>
+            <tr><td class="pin"><span class="net" style="background:var(--sig)"></span>D6 · PB10</td><td>XM DIO4 (선택)</td><td>동기 입력</td></tr>
+            <tr><td class="pin"><span class="net" style="background:var(--gnd)"></span>GND</td><td>EMG, 센서, PS1·PS2 G, 강압 모듈 GND</td><td>E5V 선과 짝인 GND 선</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="lede" style="margin-top:10px">CN6·CN7·CN10 핀 번호와 JP5 설명은 UM1724 기준입니다. 외부 전원을 먼저 켜고 USB는 나중에 꽂습니다. 연결 전에 보드 실크 인쇄로 한 번 더 확인하세요.</p>
+    </section>
+
+    <section>
+      <h2>Pixel Shifter 단자 배선</h2>
+      <div class="tbl">
+        <table>
+          <thead><tr><th>모듈</th><th>단자</th><th>연결</th></tr></thead>
+          <tbody>
+            <tr><td class="pin">PS1, PS2</td><td class="pin">V / G</td><td>Nucleo 3V3 / GND</td></tr>
+            <tr><td class="pin">PS1</td><td class="pin">DAT → D5</td><td>PB6 → R1 → 왼팔 줄 1 DIN</td></tr>
+            <tr><td class="pin">PS1</td><td class="pin">CLK → C5</td><td>PB7 → R2 → 오른팔 줄 1 DIN</td></tr>
+            <tr><td class="pin">PS2</td><td class="pin">DAT → D5</td><td>PB8 → R3 → 바깥 링(24구) DIN</td></tr>
+            <tr><td class="pin">PS2</td><td class="pin">CLK, C5, !D5</td><td>연결하지 않음</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="lede" style="margin-top:10px">모듈이 5 V 신호를 스스로 만들기 때문에 5 V 전원선이 필요 없습니다. 모듈에는 데이터선에 붙은 작은 LED가 있습니다. 첫 시험에서 줄 1의 첫 LED가 이상하면 뒷면 Neo 점퍼를 자릅니다. 모듈은 Nucleo 가까이 두고, 각 팔까지 5V·GND·DATA 케이블로 연결합니다. 도착이 늦어지면 예비 74HCT125N(5 V 전원, 1·4·10번 OE → GND, 2→3 / 5→6 / 9→8)을 쓰거나, <code>WS2812_OPEN_DRAIN 1</code>과 1 kΩ 풀업으로 먼저 시험할 수 있습니다.</p>
+    </section>
+
+    <section class="wide">
+      <h2>pMMG 센서 직접 연결 표 (J1–J12)</h2>
+      <p style="margin-bottom:10px">같은 SPI 버스의 센서는 SCK·MISO·MOSI를 함께 씁니다. CS 선만 센서마다 따로 연결합니다. 모든 센서의 VDD는 3V3, GND는 GND입니다.</p>
+      <div class="tbl">
+        <table>
+          <thead><tr><th>SPI 버스</th><th>SCK / MISO / MOSI</th><th>채널 → CS 핀</th></tr></thead>
+          <tbody>
+            <tr><td class="pin">SPI1</td><td class="pin">D3 PB3 / D5 PB4 / D4 PB5</td><td class="pin">J1 PC8 (CN10-2) · J2 PC6 (CN10-4) · J3 PC5 (CN10-6) · J10 D8 PA9</td></tr>
+            <tr><td class="pin">SPI2</td><td class="pin">PB13 (CN10-30) / PB14 (CN10-28) / PB15 (CN10-26)</td><td class="pin">J4 PA12 (CN10-12) · J5 PA11 (CN10-14) · J6 PB12 (CN10-16) · J11 D7 PA8</td></tr>
+            <tr><td class="pin">SPI3</td><td class="pin">PC10 (CN7-1) / PC11 (CN7-2) / PC12 (CN7-3)</td><td class="pin">J7 PC9 (CN10-1) · J8 PB2 (CN10-22) · J9 PB1 (CN10-24) · J12 = 동기 입력 D6 PB10</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="lede" style="margin-top:10px">펌웨어는 J1–J8을 읽고, 링은 J1을 씁니다. 연결하지 않은 채널은 <code>ms5607.h</code>에서 0으로 끄면 LD2가 오류 표시를 하지 않습니다.</p>
+    </section>
+
+    <section>
+      <h2>전원을 넣기 전 확인</h2>
+      <ol>
+        <li><span class="warn">강압 모듈의 CV를 5.0 V로 맞추고 멀티미터로 잽니다.</span> 5 V(4.75–5.25 V)일 때만 LED와 Nucleo를 연결합니다. CC는 끝까지 올려 둡니다.</li>
+        <li>JP5를 E5V 쪽으로 옮깁니다. 5 V는 <b>E5V(CN7-6)</b>에만 넣습니다. +5V 핀(CN7-18)과 3V3 핀에는 넣지 않습니다.</li>
+        <li>배터리를 먼저 켜고, 디버깅할 때만 USB를 나중에 꽂습니다.</li>
+        <li>LED 전류는 전원 단자로 바로 돌아가게 배선합니다. Nucleo GND를 거치지 않게 합니다.</li>
+        <li>센서 VDD가 <b>3V3</b>에 연결됐는지 확인합니다.</li>
+        <li>C1–C3 극성을 확인합니다. 긴 다리(+)가 5 V입니다.</li>
+        <li>WS2812 줄의 화살표 방향(DIN → DOUT)을 확인합니다.</li>
+        <li>처음에는 한 팔의 줄 1개만 연결해서 시험합니다. 줄 끝 5V·GND 보강을 한 상태에서 흰색으로 켜고, 가운데와 끝이 붉거나 어두운지 봅니다.</li>
+        <li>두 PSL-iEMG2의 Ch2 전압을 멀티미터로 잽니다. 힘을 뺄 때와 최대로 줄 때 모두 0–3.3 V 안이어야 합니다.</li>
+      </ol>
+    </section>
+
+    <section>
+      <h2>아직 정해지지 않은 것</h2>
+      <div class="tbl">
+        <table>
+          <thead><tr><th>항목</th><th>영향</th></tr></thead>
+          <tbody>
+            <tr><td>팔에 1 m 2줄을 붙이는 방향 (팔 길이 방향 나란히 / 팔을 감는 나선)</td><td>게이지 경로 설정 <code>FX_ARM_SEQUENTIAL</code>, <code>FX_ARM_SERPENTINE</code></td></tr>
+            <tr><td>Nucleo ↔ 각 팔 케이블 길이</td><td>데이터 신호 품질, 전원선 굵기</td></tr>
+            <tr><td>Ch2 envelope 휴지·최대 전압 (두 보드)</td><td>EMG 기준값 <code>EMG_FULL_SCALE_MV</code></td></tr>
+            <tr><td>pMMG 센서 개수, 모듈 핀 배치</td><td>CS 선 수, <code>ms5607.h</code> 채널 설정</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </div>
+</div>
+
+<script>
+/* Port of Core/Src/fx.c for preview. Screen colours are already gamma-encoded,
+ * so the perceptual 0..1 values are drawn directly. */
+(function () {
+  const STRIPS = 2, PER = 144, ARM = STRIPS * PER, RINGS = [24, 16, 12, 8];
+  const ACTIVE = 0.10, FILL_S = 3.0, HOLD_MS = 400, DRAIN_S = 1.5;
+  const HUE0 = 140, SPAN = -180, HEAD_W = 0.08, EMBER = 0.16, FLASH_MS = 400;
+  const RING_TAIL = 0.25, BEAT_DECAY = 140, BEAT_SPREAD = 160, DUB_GAIN = 0.55, DUB_MAX = 280, BPM_CALM = 60, BPM_FAST = 120;
+
+  const canvas = document.getElementById('stage');
+  const ctx = canvas.getContext('2d');
+  const ui = {
+    force: document.getElementById('force'), forceOut: document.getElementById('forceOut'),
+    bpm: document.getElementById('bpm'), bpmOut: document.getElementById('bpmOut'), pulse: document.getElementById('pulse'),
+    layout: document.getElementById('layout'),
+  };
+  const held = [false, false];
+  const arms = [0, 1].map(() => ({ gauge: 0, active: false, full: false, lastActive: 0, fullMs: 0, sparkle: new Float32Array(ARM) }));
+  let ringPhase = 0, calUntil = 0, beatMs = -1e9, nextBeat = 0, beats = 0, lastBeat = -1e9, dubMs = 250, last = performance.now();
+
+  const clamp = x => x < 0 ? 0 : x > 1 ? 1 : x;
+  function hsv(h, s, v) {
+    h = ((h % 360) + 360) % 360 / 60;
+    const i = Math.floor(h), f = h - i, p = v * (1 - s), q = v * (1 - s * f), t = v * (1 - s * (1 - f));
+    return [[v, t, p], [q, v, p], [p, v, t], [p, q, v], [t, p, v], [v, p, q]][i];
+  }
+  const whiten = (c, a) => (a = clamp(a), c.map(x => x + (1 - x) * a));
+  const brighter = (a, b) => a.map((x, i) => Math.max(x, b[i]));
+
+  function update(arm, level, now, dt, cal) {
+    if (cal) { arm.gauge = 0; arm.active = false; arm.full = false; return; }
+    arm.active = level >= (arm.active ? ACTIVE * 0.7 : ACTIVE);
+    if (arm.active) { arm.lastActive = now; arm.gauge += dt * (0.5 + 0.5 * level) / FILL_S; }
+    else if (now - arm.lastActive >= HOLD_MS) arm.gauge -= dt / DRAIN_S;
+    arm.gauge = clamp(arm.gauge);
+    if (!arm.full && arm.gauge >= 1) { arm.full = true; arm.fullMs = now; }
+    else if (arm.full && arm.gauge < 0.98) arm.full = false;
+  }
+
+  function armColours(arm, now, cal, seq) {
+    const t = now / 1000, len = seq ? ARM : PER, head = arm.gauge * len;
+    const flash = arm.full && now - arm.fullMs < FLASH_MS ? 1 - (now - arm.fullMs) / FLASH_MS : 0;
+    const ember = EMBER * (0.75 + 0.25 * Math.sin(2 * Math.PI * t / 3));
+    const scan = (t * 0.6) % 1, chance = 0.004 + 0.03 * arm.gauge * arm.gauge;
+    const out = [];
+    for (let i = 0; i < ARM; i++) {
+      const strip = Math.floor(i / PER), k0 = i % PER, k = seq ? strip * PER + k0 : k0;
+      const p = (k + 0.5) / len;
+      if (cal) { out.push(hsv(220, 1, 0.6 * clamp(1 - Math.abs(p - scan) * 10))); continue; }
+      let c = hsv(HUE0, 1, ember);
+      const cover = clamp(head - k);
+      if (arm.full) c = whiten(hsv(p * 360 - t * 240, 1, 0.9), flash);
+      else if (cover > 0) {
+        const wave = 0.6 + 0.4 * (0.5 + 0.5 * Math.sin(2 * Math.PI * (p * 2.5 - t * 1.2)));
+        let fill = hsv(HUE0 + SPAN * p, 1, wave * cover);
+        const behind = arm.gauge - p;
+        if (behind < HEAD_W) fill = whiten(fill, 0.85 * cover * (1 - behind / HEAD_W));
+        c = brighter(c, fill);
+      }
+      if ((cover > 0 || arm.full) && Math.random() < chance) arm.sparkle[i] = 1;
+      else arm.sparkle[i] *= 200 / 256;
+      if (arm.sparkle[i] > 0.004) c = whiten(c, arm.sparkle[i]);
+      out.push(c);
+    }
+    return out;
+  }
+
+  /* Simulated detector: a beat at the slider rate with a little jitter; the pulse
+   * becomes valid after 3 regular beats and is lost 2.5 s after the last beat. */
+  function simulateBeats(now) {
+    const bpm = +ui.bpm.value;
+    if (!ui.pulse.checked) { if (now - lastBeat > 2500) beats = 0; return; }
+    if (now >= nextBeat) {
+      beats = now - lastBeat > 2500 ? 1 : beats + 1;
+      lastBeat = now; beatMs = now;
+      if (beats > 3) dubMs = Math.min(0.3 * 60000 / bpm, DUB_MAX);
+      nextBeat = now + 60000 / bpm * (1 + 0.04 * (Math.random() - 0.5));
+    }
+  }
+
+  const flash = ms => ms < 0 ? 0 : Math.exp(-ms / BEAT_DECAY);
+  function ringColours(dt, now, cal) {
+    const t = now / 1000, out = [];
+    if (cal) { const v = 0.18 + 0.1 * Math.sin(2 * Math.PI * t / 1.5); RINGS.forEach(n => { for (let k = 0; k < n; k++) out.push(hsv(220, 1, v)); }); return out; }
+    if (now - lastBeat > 2500) beats = 0;
+    const valid = beats > 3, bpm = valid ? +ui.bpm.value : 0;
+    const since = now - beatMs, strength = valid ? 1 : 0.35;
+    const hue = 195 + 165 * clamp((bpm - BPM_CALM) / (BPM_FAST - BPM_CALM));
+    const idle = valid ? 0.06 : 0.04 + 0.03 * (0.5 + 0.5 * Math.sin(2 * Math.PI * t / 3));
+    ringPhase = (ringPhase + dt * (valid ? 0.5 * bpm / 60 : 0.1)) % 1;
+    const cc = hsv(hue, 1, 0.22 * strength);
+    RINGS.forEach((n, r) => {
+      const depth = r / (RINGS.length - 1), delay = (1 - depth) * BEAT_SPREAD;
+      const e = clamp(flash(since - delay) + DUB_GAIN * flash(since - dubMs - delay)) * strength;
+      const glow = hsv(hue, 1 - 0.7 * depth * e, idle + e * (0.55 + 0.45 * depth));
+      const head = (ringPhase * (1 + 0.3 * r)) % 1, reverse = r % 2 === 1;
+      for (let k = 0; k < n; k++) {
+        const angle = k / n, d = ((reverse ? angle + head : head - angle) + 2) % 1;
+        const tail = d < RING_TAIL ? 1 - d / RING_TAIL : 0;
+        out.push(brighter(glow, cc.map(x => x * tail)));
+      }
+    });
+    return out;
+  }
+
+  function led(x, y, r, c) {
+    const off = getComputedStyle(document.documentElement).getPropertyValue('--stage-off').trim() || '#1c2420';
+    const m = Math.max(c[0], c[1], c[2]);
+    ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2);
+    if (m < 0.01) { ctx.fillStyle = off; ctx.fill(); return; }
+    const rgb = c.map(v => Math.round(clamp(v) * 255)).join(',');
+    ctx.shadowColor = `rgba(${rgb},${Math.min(1, m * 1.4)})`; ctx.shadowBlur = 10 * m;
+    ctx.fillStyle = `rgb(${rgb})`; ctx.fill(); ctx.shadowBlur = 0;
+  }
+
+  function drawArm(cols, x0, label, gauge) {
+    ctx.fillStyle = '#93a29a'; ctx.font = '13px "IBM Plex Sans KR", sans-serif';
+    ctx.fillText(`${label}  ${Math.round(gauge * 100)}%`, x0, 34);
+    const dx = 3.02, dy = 80;
+    for (let s = 0; s < STRIPS; s++) for (let k = 0; k < PER; k++)
+      led(x0 + 4 + k * dx, 110 + s * dy, 1.4, cols[s * PER + k]);
+  }
+
+  function frame(now) {
+    const dt = Math.min(0.1, (now - last) / 1000); last = now;
+    const cal = now < calUntil, force = +ui.force.value, seq = ui.layout.value === '1';
+    simulateBeats(now);
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    const labels = ['왼팔', '오른팔'];
+    arms.forEach((arm, a) => {
+      update(arm, held[a] ? force : 0, now, dt, cal);
+      drawArm(armColours(arm, now, cal, seq), 20 + a * 470, labels[a], arm.gauge);
+    });
+    const rc = ringColours(dt, now, cal), cx = 1060, cy = 165, RADII = [108, 80, 56, 32], SIZES = [5.5, 5, 4.6, 4.2];
+    ctx.fillStyle = '#93a29a'; ctx.fillText(beats > 3 ? `아크 리액터  ${ui.bpm.value} BPM` : '아크 리액터  맥박 찾는 중', cx - 70, 34);
+    let i = 0;
+    RINGS.forEach((n, r) => { for (let k = 0; k < n; k++, i++) { const a = 2 * Math.PI * k / n; led(cx + RADII[r] * Math.sin(a), cy - RADII[r] * Math.cos(a), SIZES[r], rc[i]); } });
+    requestAnimationFrame(frame);
+  }
+
+  function bindHold(btn, idx) {
+    const on = e => { e.preventDefault(); held[idx] = true; btn.classList.add('on'); };
+    const off = () => { held[idx] = false; btn.classList.remove('on'); };
+    btn.addEventListener('pointerdown', on);
+    ['pointerup', 'pointerleave', 'pointercancel'].forEach(ev => btn.addEventListener(ev, off));
+    return { on: () => { held[idx] = true; btn.classList.add('on'); }, off };
+  }
+  const hL = bindHold(document.getElementById('holdL'), 0), hR = bindHold(document.getElementById('holdR'), 1);
+  addEventListener('keydown', e => { if (e.repeat) return; if (e.key === 'a' || e.key === 'A') hL.on(); if (e.key === 'l' || e.key === 'L') hR.on(); });
+  addEventListener('keyup', e => { if (e.key === 'a' || e.key === 'A') hL.off(); if (e.key === 'l' || e.key === 'L') hR.off(); });
+  addEventListener('blur', () => { hL.off(); hR.off(); });
+  ui.force.addEventListener('input', () => ui.forceOut.textContent = (+ui.force.value).toFixed(2));
+  ui.bpm.addEventListener('input', () => ui.bpmOut.textContent = ui.bpm.value);
+  document.getElementById('b1').addEventListener('click', () => { calUntil = performance.now() + 2000; beats = 0; lastBeat = -1e9; arms.forEach(a => { a.gauge = 0; a.full = false; }); });
+  requestAnimationFrame(frame);
+})();
+</script>
+
+</body></html>

@@ -1,0 +1,12 @@
+# Build outputs
+firmware/*/build/
+reference/*/Debug/
+reference/*/Release/
+*.o
+*.d
+*.su
+*.map
+# IDE / local
+.claude/
+.settings/
+*.swp
