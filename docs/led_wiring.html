@@ -203,8 +203,7 @@ button.plain { font: inherit; padding: 8px 14px; border-radius: 6px; cursor: poi
 
         <!-- PC -->
         <rect class="blk" x="445" y="20" width="150" height="50" rx="4"/>
-        <text class="th" x="520" y="42" text-anchor="middle">PC</text>
-        <text class="ts" x="520" y="59" text-anchor="middle">pMMG 스트림 수신</text>
+        <text class="th" x="520" y="50" text-anchor="middle">PC</text>
         <path class="w wg dash" d="M520 70 V120"/>
         <text class="ts" x="530" y="96">USB (선택)</text>
 
@@ -223,7 +222,6 @@ button.plain { font: inherit; padding: 8px 14px; border-radius: 6px; cursor: poi
         <text class="t" x="410" y="524">PC8 · CN10-2</text>
         <text class="t" x="410" y="554">GND</text>
         <text class="ts" x="410" y="576">SPI1 (SCK·MISO·MOSI)</text>
-        <text class="t" x="410" y="604">D6 · PB10</text>
         <text class="t" x="630" y="204" text-anchor="end">D10 · PB6</text>
         <text class="ts" x="630" y="217" text-anchor="end">TIM4 CH1</text>
         <text class="t" x="630" y="414" text-anchor="end">PB7 · CN7-21</text>
@@ -277,9 +275,6 @@ button.plain { font: inherit; padding: 8px 14px; border-radius: 6px; cursor: poi
         <path class="w ws" d="M270 520 H400"/><text class="ts" x="335" y="513" text-anchor="middle">CS1</text>
         <path class="w wg" d="M270 550 H400"/>
         <text class="tk" x="165" y="583" text-anchor="middle">J2–J11 연결은 아래 표</text>
-        <text class="ts" x="70" y="604">XM DIO4 (선택)</text>
-        <path class="w ws dash" d="M180 600 H392"/>
-        <path class="ds" d="M400 600 l-8 -4 v8 z"/>
 
         <!-- Battery power chain: PD power bank -> PD trigger -> 5 V buck, then buses -->
         <rect class="blk" x="612" y="20" width="108" height="72" rx="4"/>
@@ -362,7 +357,7 @@ button.plain { font: inherit; padding: 8px 14px; border-radius: 6px; cursor: poi
         <text class="ts" x="964" y="177">왼팔 · 2줄 × 144구 (1 m)</text>
         <path class="w w5" d="M880 165 H890"/><circle class="d5" cx="880" cy="165" r="3.6"/><rect class="symfill" x="890" y="160" width="22" height="10" rx="1"/><path class="sym" d="M890 165 H912" style="stroke-width:1"/><path class="w w5" d="M912 165 H945"/><text class="ts" x="901" y="156" text-anchor="middle">F1 5A</text>
         <path class="w w5" d="M945 165 V310"/>
-        <path class="w w5" d="M945 310 H936"/><path class="sym" d="M936 303 V317 M930 303 V317"/><path class="w wg" d="M930 310 H920"/><circle class="d5" cx="945" cy="310" r="3.6"/><circle class="dg" cx="920" cy="310" r="3.6"/><text class="ts" x="933" y="330" text-anchor="middle">C1</text>
+        <path class="w w5" d="M945 310 H936"/><path class="sym" d="M936 303 V317 M930 303 V317"/><path class="w wg" d="M930 310 H920"/><circle class="d5" cx="945" cy="310" r="3.6"/><circle class="dg" cx="920" cy="310" r="3.6"/><text class="ts" x="962" y="314">C1 1000 µF 16 V</text>
         <g>
           <rect class="strip" x="990" y="193" width="160" height="33" rx="3"/>
           <text class="ts" x="995" y="203">DIN</text>
@@ -383,8 +378,7 @@ button.plain { font: inherit; padding: 8px 14px; border-radius: 6px; cursor: poi
           <path class="w wg" d="M920 270 H990"/><circle class="dg" cx="920" cy="270" r="3.6"/>
           <path class="w w5" d="M1150 250 H1168 V296 H945"/><circle class="d5" cx="945" cy="296" r="3.6"/>
           <path class="w wg" d="M1150 260 H1160 V290 H920"/><circle class="dg" cx="920" cy="290" r="3.6"/>
-          <text class="tk" x="1075" y="316" text-anchor="middle">줄 1 DOUT → 줄 2 DIN (데이터)</text>
-          <text class="tk" x="1075" y="332" text-anchor="middle">줄마다 양 끝에 5V·GND</text>
+          <text class="tk" x="1075" y="334" text-anchor="middle">줄 1 DOUT → 줄 2 DIN (데이터)</text>
         </g>
 
         <!-- 오른팔: fuse F2 -> arm 5 V rail (x945) = WAGO point after the fuse. Strip 1 end feed goes over the top, strip 2 end feed under the bottom. -->
@@ -392,7 +386,7 @@ button.plain { font: inherit; padding: 8px 14px; border-radius: 6px; cursor: poi
         <text class="ts" x="964" y="387">오른팔 · 2줄 × 144구 (1 m)</text>
         <path class="w w5" d="M880 375 H890"/><circle class="d5" cx="880" cy="375" r="3.6"/><rect class="symfill" x="890" y="370" width="22" height="10" rx="1"/><path class="sym" d="M890 375 H912" style="stroke-width:1"/><path class="w w5" d="M912 375 H945"/><text class="ts" x="901" y="366" text-anchor="middle">F2 5A</text>
         <path class="w w5" d="M945 375 V520"/>
-        <path class="w w5" d="M945 520 H936"/><path class="sym" d="M936 513 V527 M930 513 V527"/><path class="w wg" d="M930 520 H920"/><circle class="d5" cx="945" cy="520" r="3.6"/><circle class="dg" cx="920" cy="520" r="3.6"/><text class="ts" x="933" y="540" text-anchor="middle">C2</text>
+        <path class="w w5" d="M945 520 H936"/><path class="sym" d="M936 513 V527 M930 513 V527"/><path class="w wg" d="M930 520 H920"/><circle class="d5" cx="945" cy="520" r="3.6"/><circle class="dg" cx="920" cy="520" r="3.6"/><text class="ts" x="962" y="524">C2 1000 µF 16 V</text>
         <g>
           <rect class="strip" x="990" y="403" width="160" height="33" rx="3"/>
           <text class="ts" x="995" y="413">DIN</text>
@@ -413,15 +407,14 @@ button.plain { font: inherit; padding: 8px 14px; border-radius: 6px; cursor: poi
           <path class="w wg" d="M920 480 H990"/><circle class="dg" cx="920" cy="480" r="3.6"/>
           <path class="w w5" d="M1150 460 H1168 V506 H945"/><circle class="d5" cx="945" cy="506" r="3.6"/>
           <path class="w wg" d="M1150 470 H1160 V500 H920"/><circle class="dg" cx="920" cy="500" r="3.6"/>
-          <text class="tk" x="1075" y="526" text-anchor="middle">줄 1 DOUT → 줄 2 DIN (데이터)</text>
-          <text class="tk" x="1075" y="542" text-anchor="middle">줄마다 양 끝에 5V·GND</text>
+          <text class="tk" x="1075" y="544" text-anchor="middle">줄 1 DOUT → 줄 2 DIN (데이터)</text>
         </g>
 
         <!-- Ring -->
         <text class="ts" x="964" y="580">아크 리액터 · 24+16+12+8구</text>
         <path class="w w5" d="M880 600 H890"/><circle class="d5" cx="880" cy="600" r="3.6"/><rect class="symfill" x="890" y="595" width="22" height="10" rx="1"/><path class="sym" d="M890 600 H912" style="stroke-width:1"/><path class="w w5" d="M912 600 H945"/><text class="ts" x="901" y="591" text-anchor="middle">F3 5A</text>
         <path class="w w5" d="M945 600 V656"/>
-        <path class="w w5" d="M945 656 H936"/><path class="sym" d="M936 649 V663 M930 649 V663"/><path class="w wg" d="M930 656 H920"/><circle class="d5" cx="945" cy="656" r="3.6"/><circle class="dg" cx="920" cy="656" r="3.6"/><text class="ts" x="933" y="682" text-anchor="middle">C3</text>
+        <path class="w w5" d="M945 656 H936"/><path class="sym" d="M936 649 V663 M930 649 V663"/><path class="w wg" d="M930 656 H920"/><circle class="d5" cx="945" cy="656" r="3.6"/><circle class="dg" cx="920" cy="656" r="3.6"/><text class="ts" x="915" y="680" text-anchor="end">C3 1000 µF 16 V</text>
         <rect class="blk" x="990" y="600" width="190" height="96" rx="4"/>
         <text class="t" x="998" y="624">DIN</text>
         <text class="t" x="998" y="648">5V</text>
@@ -430,7 +423,7 @@ button.plain { font: inherit; padding: 8px 14px; border-radius: 6px; cursor: poi
         <path class="w wg" d="M920 668 H990"/><circle class="dg" cx="920" cy="668" r="3.6"/>
         <circle class="rled" cx="1122.0" cy="614.0" r="3.0"/><circle class="rled" cx="1130.8" cy="615.2" r="3.0"/><circle class="rled" cx="1139.0" cy="618.6" r="3.0"/><circle class="rled" cx="1146.0" cy="624.0" r="3.0"/><circle class="rled" cx="1151.4" cy="631.0" r="3.0"/><circle class="rled" cx="1154.8" cy="639.2" r="3.0"/><circle class="rled" cx="1156.0" cy="648.0" r="3.0"/><circle class="rled" cx="1154.8" cy="656.8" r="3.0"/><circle class="rled" cx="1151.4" cy="665.0" r="3.0"/><circle class="rled" cx="1146.0" cy="672.0" r="3.0"/><circle class="rled" cx="1139.0" cy="677.4" r="3.0"/><circle class="rled" cx="1130.8" cy="680.8" r="3.0"/><circle class="rled" cx="1122.0" cy="682.0" r="3.0"/><circle class="rled" cx="1113.2" cy="680.8" r="3.0"/><circle class="rled" cx="1105.0" cy="677.4" r="3.0"/><circle class="rled" cx="1098.0" cy="672.0" r="3.0"/><circle class="rled" cx="1092.6" cy="665.0" r="3.0"/><circle class="rled" cx="1089.2" cy="656.8" r="3.0"/><circle class="rled" cx="1088.0" cy="648.0" r="3.0"/><circle class="rled" cx="1089.2" cy="639.2" r="3.0"/><circle class="rled" cx="1092.6" cy="631.0" r="3.0"/><circle class="rled" cx="1098.0" cy="624.0" r="3.0"/><circle class="rled" cx="1105.0" cy="618.6" r="3.0"/><circle class="rled" cx="1113.2" cy="615.2" r="3.0"/><circle class="rled" cx="1122.0" cy="623.0" r="2.6"/><circle class="rled" cx="1131.6" cy="624.9" r="2.6"/><circle class="rled" cx="1139.7" cy="630.3" r="2.6"/><circle class="rled" cx="1145.1" cy="638.4" r="2.6"/><circle class="rled" cx="1147.0" cy="648.0" r="2.6"/><circle class="rled" cx="1145.1" cy="657.6" r="2.6"/><circle class="rled" cx="1139.7" cy="665.7" r="2.6"/><circle class="rled" cx="1131.6" cy="671.1" r="2.6"/><circle class="rled" cx="1122.0" cy="673.0" r="2.6"/><circle class="rled" cx="1112.4" cy="671.1" r="2.6"/><circle class="rled" cx="1104.3" cy="665.7" r="2.6"/><circle class="rled" cx="1098.9" cy="657.6" r="2.6"/><circle class="rled" cx="1097.0" cy="648.0" r="2.6"/><circle class="rled" cx="1098.9" cy="638.4" r="2.6"/><circle class="rled" cx="1104.3" cy="630.3" r="2.6"/><circle class="rled" cx="1112.4" cy="624.9" r="2.6"/><circle class="rled" cx="1122.0" cy="631.0" r="2.4"/><circle class="rled" cx="1130.5" cy="633.3" r="2.4"/><circle class="rled" cx="1136.7" cy="639.5" r="2.4"/><circle class="rled" cx="1139.0" cy="648.0" r="2.4"/><circle class="rled" cx="1136.7" cy="656.5" r="2.4"/><circle class="rled" cx="1130.5" cy="662.7" r="2.4"/><circle class="rled" cx="1122.0" cy="665.0" r="2.4"/><circle class="rled" cx="1113.5" cy="662.7" r="2.4"/><circle class="rled" cx="1107.3" cy="656.5" r="2.4"/><circle class="rled" cx="1105.0" cy="648.0" r="2.4"/><circle class="rled" cx="1107.3" cy="639.5" r="2.4"/><circle class="rled" cx="1113.5" cy="633.3" r="2.4"/><circle class="rled" cx="1122.0" cy="639.0" r="2.0"/><circle class="rled" cx="1128.4" cy="641.6" r="2.0"/><circle class="rled" cx="1131.0" cy="648.0" r="2.0"/><circle class="rled" cx="1128.4" cy="654.4" r="2.0"/><circle class="rled" cx="1122.0" cy="657.0" r="2.0"/><circle class="rled" cx="1115.6" cy="654.4" r="2.0"/><circle class="rled" cx="1113.0" cy="648.0" r="2.0"/><circle class="rled" cx="1115.6" cy="641.6" r="2.0"/>
         <text class="ts" x="1085" y="712" text-anchor="middle">DIN → 바깥 24 → 16 → 12 → 안쪽 8</text>
-        <text class="ts" x="1085" y="728" text-anchor="middle">F1–F3 = 5 A 퓨즈 · C1–C3 = 1000 µF</text>
+        <text class="ts" x="1085" y="728" text-anchor="middle">F1–F3 = 5 A 퓨즈 · C1–C3 = 1000 µF 16 V</text>
 
         <!-- common GND from Nucleo -->
         <path class="w wg" d="M640 690 H920"/>
@@ -521,7 +514,7 @@ UB459 C1/C2: 20 V 5 A (100 W)
             <tr><td>Adafruit Pixel Shifter (6066)</td><td class="num">2</td><td>회로도 PS1·PS2. 나사 단자, 2채널(DAT→D5, CLK→C5), V는 Nucleo 3V3. <a href="https://www.devicemart.co.kr/goods/view?no=16132934">디바이스마트(DigiKey 경유)</a> 8,349원, 준비 4–5일</td></tr>
             <tr><td>74HCT125N (DIP) — 예비</td><td class="num">1</td><td>Pixel Shifter가 늦어질 때 대신 씀. <a href="https://www.devicemart.co.kr/goods/view?no=1057573">디바이스마트</a>, 준비 1–2일</td></tr>
             <tr><td>저항 330 Ω</td><td class="num">3</td><td>데이터선 중간에 납땜 + 수축튜브</td></tr>
-            <tr><td>전해 커패시터 1000 µF 10 V 이상</td><td class="num">3</td><td>각 팔·링 전원 입력의 단자에 다리를 같이 물림</td></tr>
+            <tr><td>전해 커패시터 1000 µF, 16 V (최소 10 V)</td><td class="num">3</td><td>회로도 C1–C3. 각 팔·링의 퓨즈 뒤 5V–GND 사이, 전원 입력 단자에 다리를 같이 물림. 5 V 선에 쓰므로 전압 정격은 2배 이상인 10 V 이상, 여유를 두려면 16 V. 극성 주의(긴 다리 +)</td></tr>
             <tr><td>WAGO 221-415 (5구)</td><td class="num">8 이상</td><td>5 V·GND 분배, 줄 끝 보강선 포함. 24–12 AWG, 32 A. <a href="https://www.devicemart.co.kr/goods/view?no=10827023">디바이스마트</a>, 준비 2–3일</td></tr>
             <tr><td>퓨즈 홀더 (오토/ATO 블레이드형)</td><td class="num">3</td><td>강압 모듈 출력 뒤, 왼팔·오른팔·아크 리액터에 하나씩. <a href="https://www.devicemart.co.kr/goods/view?no=1153152">퓨즈홀더 CAR - 캡(유)</a>, 준비 1–2일</td></tr>
             <tr><td>AUTO-FUSE 32V 5A</td><td class="num">3 + 예비 3</td><td>홀더에 끼우는 표준(오토) 블레이드 퓨즈. 세 곳 모두 5 A. <a href="https://www.devicemart.co.kr/goods/view?no=11509">디바이스마트</a>, 개당 110원</td></tr>
@@ -601,7 +594,7 @@ UB459 C1/C2: 20 V 5 A (100 W)
         <li>배터리를 먼저 켜고, 디버깅할 때만 USB를 나중에 꽂습니다.</li>
         <li>LED 전류는 전원 단자로 바로 돌아가게 배선합니다. Nucleo GND를 거치지 않게 합니다.</li>
         <li>센서 VDD가 <b>3V3</b>에 연결됐는지 확인합니다.</li>
-        <li>C1–C3 극성을 확인합니다. 긴 다리(+)가 5 V입니다.</li>
+        <li>C1–C3(1000 µF, 16 V 전해) 극성을 확인합니다. 긴 다리(+)가 5 V입니다.</li>
         <li>WS2812 줄의 화살표 방향(DIN → DOUT)을 확인합니다.</li>
         <li>처음에는 한 팔의 줄 1개만 연결해서 시험합니다. 줄 끝 5V·GND 보강을 한 상태에서 흰색으로 켜고, 가운데와 끝이 붉거나 어두운지 봅니다.</li>
         <li>두 PSL-iEMG2의 Ch2 전압을 멀티미터로 잽니다. 힘을 뺄 때와 최대로 줄 때 모두 0–3.3 V 안이어야 합니다.</li>
