@@ -8,8 +8,11 @@
   *  - WS2812_RIGHT_ARM: PB7 (CN7-21),  TIM4_CH2, DMA1 stream 3 channel 2.
   *  - WS2812_RING:      PB8 (D15),     TIM4_CH3, DMA1 stream 7 channel 2
   *                      (arc reactor: concentric rings, chained outer to inner).
-  * On each arm the strips are daisy-chained (DOUT of strip k to DIN of strip
-  * k+1), so pixel index = strip * WS2812_LEDS_PER_STRIP + position.
+  * On each arm the driven strips are daisy-chained (DOUT of strip k to DIN of
+  * strip k+1), so pixel index = strip * WS2812_LEDS_PER_STRIP + position.
+  * WS2812_ARM_PARALLEL copies of that chain can hang on the same data line
+  * (DIN in parallel, one series resistor each); they all show the same
+  * pixels, and the current estimate is multiplied by that count.
   *
   * Each bit is one 1.25 us PWM period. TIM4 runs continuously; its CCx DMA
   * requests come on the update event (CCDS = 1), and every DMA write lands
@@ -40,10 +43,13 @@
 
 /* USER CONFIGURATION BEGIN --------------------------------------------------*/
 #ifndef WS2812_ARM_STRIPS
-#define WS2812_ARM_STRIPS      2U   /**< Strips on each arm's chain. */
+#define WS2812_ARM_STRIPS      1U   /**< Daisy-chained strips on each arm's data line. */
 #endif
 #ifndef WS2812_LEDS_PER_STRIP
-#define WS2812_LEDS_PER_STRIP  144U /**< LEDs per arm strip (1 m of 144 LED/m). */
+#define WS2812_LEDS_PER_STRIP  45U  /**< LEDs per arm strip. */
+#endif
+#ifndef WS2812_ARM_PARALLEL
+#define WS2812_ARM_PARALLEL    2U   /**< Identical strips sharing each arm's data line (DIN in parallel). */
 #endif
 #ifndef WS2812_RING_LEDS
 #define WS2812_RING_LEDS       60U  /**< LEDs on the arc reactor chain (rings 24+16+12+8, see fx.h). */
@@ -55,8 +61,9 @@
 /** Estimated colour-current caps in mA. An output above its cap is dimmed
  *  uniformly; then, if all outputs together are above WS2812_POWER_LIMIT_MA,
  *  every output is dimmed by the same factor.
- *  ARM: keep cap + idle (about 0.3 A for 288 LEDs) below 80 % of the arm fuse
- *  (5 A fuse -> 4 A). POWER: keep it below about 70 % of the weakest supply
+ *  All caps are real currents: an arm's estimate already includes its
+ *  WS2812_ARM_PARALLEL copies. ARM: keep cap + idle (about 0.1 A for 2 x 45
+ *  LEDs) below 80 % of the arm fuse (5 A fuse -> 4 A). POWER: keep it below about 70 % of the weakest supply
  *  stage (20 V trigger 3 A ~ 10 A at 5 V) minus the idle current. */
 #ifndef WS2812_ARM_LIMIT_MA
 #define WS2812_ARM_LIMIT_MA    3500U  /**< Each arm (left, right). */
@@ -77,6 +84,9 @@
 
 #if WS2812_ARM_LEDS == 0U || WS2812_ARM_LEDS > 600U
 #error "Each arm chain must have 1-600 LEDs"
+#endif
+#if WS2812_ARM_PARALLEL == 0U || WS2812_ARM_PARALLEL > 4U
+#error "WS2812_ARM_PARALLEL must be 1-4"
 #endif
 #if WS2812_RING_LEDS == 0U || WS2812_RING_LEDS > 600U
 #error "The ring must have 1-600 LEDs"

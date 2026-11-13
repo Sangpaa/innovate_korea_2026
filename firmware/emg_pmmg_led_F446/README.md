@@ -2,7 +2,7 @@
 
 NUCLEO-F446RE 펌웨어. `reference/pmmg_HND_STM`(NUCLEO-G474RE)을 F446RE로 포팅하고, LED 출력 두 개를 추가했다.
 
-- 왼팔·오른팔 EMG envelope(A0, A1) → 각 팔의 WS2812 2줄(144구씩, 144구/m 1 m)에 충전 게이지
+- 왼팔·오른팔 EMG envelope(A0, A1) → 각 팔의 WS2812 2줄(45구씩, 데이터 병렬)에 충전 게이지
 - pMMG J1 심박 → 아크 리액터(WS2812 링 24·16·12·8구 동심원, 60구)가 박동마다 빛남
 - 전체 배선도, 효과 미리보기, 구매 목록: 아티팩트 "EMG·pMMG LED 배선도" (https://claude.ai/artifact/6bRHv5xasxSt1ucHRmLvBD)
 
@@ -11,7 +11,8 @@ NUCLEO-F446RE 펌웨어. `reference/pmmg_HND_STM`(NUCLEO-G474RE)을 F446RE로 �
 ```sh
 make                              # build/emg_pmmg_led_F446.elf, .bin
 make flash                        # ST-LINK(SWD)로 쓰고 리셋
-make WS2812_LEDS_PER_STRIP=60     # 줄당 LED 개수 변경 (기본 144)
+make WS2812_LEDS_PER_STRIP=60     # 줄당 LED 개수 변경 (기본 45)
+make WS2812_ARM_PARALLEL=1        # 팔당 병렬 줄 수 변경 (기본 2)
 ```
 
 - 플래시 전 원래 보드 펌웨어는 `../backup/f446re_before_flash_20261022.bin`에 있다.
@@ -22,11 +23,11 @@ make WS2812_LEDS_PER_STRIP=60     # 줄당 LED 개수 변경 (기본 144)
 | 기능 | Nucleo 핀 | 연결 |
 |---|---|---|
 | EMG envelope 입력 | A0 (PA0) 왼팔, A1 (PA1) 오른팔 | PSL-iEMG2 Ch2. **0–3.3 V만 허용**한다. 보드 전원은 Nucleo 5V. |
-| WS2812 데이터 | D10 (PB6) 왼팔, PB7 (CN7-21) 오른팔, D15 (PB8) 링 | Pixel Shifter 2개(PS1: PB6→D5, PB7→C5 / PS2: PB8→D5, V = 3V3) → 각 330 Ω → 줄 1 / 바깥 링(24구) DIN. 예비: 74HCT125N(5 V 전원) |
+| WS2812 데이터 | D10 (PB6) 왼팔, PB7 (CN7-21) 오른팔, D15 (PB8) 링 | Pixel Shifter 2개(PS1: PB6→D5, PB7→C5 / PS2: PB8→D5, V = 3V3) → 줄마다 330 Ω → 팔 줄 1·줄 2 DIN(병렬) / 바깥 링(24구) DIN. 예비: 74HCT125N(5 V 전원) |
 | pMMG 센서 | Nucleo 핀에 직접 | 레퍼런스와 같다 (SPI1/2/3). 단 J7 CS는 PC9 (F446RE에는 PB11이 없다). J1 = D3 SCK, D5 MISO, D4 MOSI, PC8 CS, 3V3, GND. J12(D6 PB10)는 XM 동기 입력이다. |
 | PC 스트림 | USB (ST-LINK VCP) | 921600 8N1, 레퍼런스 v5 패킷 형식 그대로 |
 
-각 팔의 2줄은 직렬로 연결한다(줄 1 DOUT → 줄 2 DIN). 1 m 줄은 끝에도 5V·GND를 연결한다. 아크 리액터는 바깥에서 안쪽으로 직렬 연결한다(24 → 16 → 12 → 8). 링 크기와 순서는 `fx.h`의 `FX_RING_SIZES`이고, 합이 `WS2812_RING_LEDS`(60)와 같아야 한다.
+각 팔의 2줄은 데이터를 병렬로 연결한다. Pixel Shifter 출력을 두 갈래로 나누고, 갈래마다 330 Ω을 거쳐 줄 1 DIN과 줄 2 DIN에 넣는다. 줄 1 DOUT은 연결하지 않는다. 두 줄은 같은 화면을 보여 준다. 펌웨어 설정은 `WS2812_ARM_STRIPS` 1, `WS2812_LEDS_PER_STRIP` 45, `WS2812_ARM_PARALLEL` 2이다. 아크 리액터는 바깥에서 안쪽으로 직렬 연결한다(24 → 16 → 12 → 8). 링 크기와 순서는 `fx.h`의 `FX_RING_SIZES`이고, 합이 `WS2812_RING_LEDS`(60)와 같아야 한다.
 
 전원은 USB-C PD 보조배터리 → PD 트리거(20 V) → 5 V 강압 모듈이다. LED는 강압 모듈에서 직접 받고, Nucleo는 같은 5 V를 E5V(CN7-6, JP5 → E5V)로 받는다. 자세한 배선은 아티팩트를 본다.
 
@@ -40,14 +41,14 @@ make WS2812_LEDS_PER_STRIP=60     # 줄당 LED 개수 변경 (기본 144)
 - **기준값:** 부팅 직후 EMG는 2 s, pMMG는 1 s 동안 측정한다. 이때 힘을 빼야 한다. 측정 중 팔은 파란 점이 움직이고 링은 파랗게 숨 쉰다.
 - **B1 버튼:** 센서 재초기화(레퍼런스 동작), EMG·pMMG 기준값 재측정, 게이지 비움.
 - **링 빨간 깜빡임:** 바깥 링 첫 LED. J1 데이터가 없거나 유효하지 않다.
-- **프레임:** 팔 한 줄 체인(288구)을 보내는 데 약 8.9 ms가 걸린다. 100 Hz 주기(10 ms) 안에 들어간다.
-- **전류 제한:** `ws2812.c`가 프레임마다 출력별 전류를 추정한다. 감마 2.2와 밝기 상한(128)을 먼저 적용한다. 그다음 팔마다 3.5 A(`WS2812_ARM_LIMIT_MA`), 아크 리액터 1.8 A(`WS2812_RING_LIMIT_MA`)를 넘으면 그 출력을 어둡게 한다. 마지막으로 전체가 8 A(`WS2812_POWER_LIMIT_MA`)를 넘으면 모두 같은 비율로 어둡게 한다. 이 값은 색 전류만 센다. 대기 전류(LED당 약 1 mA)는 따로 더해진다. 팔 퓨즈 5 A 기준: 3.5 A + 대기 0.3 A = 3.8 A로 퓨즈 정격의 80 % 안이다.
+- **프레임:** 세 출력은 동시에 나간다. 가장 긴 링(60구)이 약 2.1 ms, 팔(45구)이 약 1.6 ms다. 100 Hz 주기(10 ms) 안에 들어간다.
+- **전류 제한:** `ws2812.c`가 프레임마다 출력별 전류를 추정한다. 감마 2.2와 밝기 상한(128)을 먼저 적용한다. 그다음 팔마다 3.5 A(`WS2812_ARM_LIMIT_MA`), 아크 리액터 1.8 A(`WS2812_RING_LIMIT_MA`)를 넘으면 그 출력을 어둡게 한다. 마지막으로 전체가 8 A(`WS2812_POWER_LIMIT_MA`)를 넘으면 모두 같은 비율로 어둡게 한다. 팔 전류는 병렬 줄 수(`WS2812_ARM_PARALLEL`)를 곱해서 센다. 그래서 세 제한값은 모두 실제 전류다. 이 값은 색 전류만 센다. 대기 전류(LED당 약 1 mA)는 따로 더해진다. 45구 2줄의 최대 색 전류는 팔당 약 2.7 A라서 지금은 팔 제한이 걸리지 않는다.
 
 ## 조정 값
 
 | 파일 | 설정 |
 |---|---|
-| `Core/Inc/ws2812.h` | `WS2812_ARM_STRIPS`, `WS2812_LEDS_PER_STRIP`, `WS2812_RING_LEDS`, `WS2812_MAX_BRIGHTNESS`(128), `WS2812_ARM_LIMIT_MA`(3500), `WS2812_RING_LIMIT_MA`(1800), `WS2812_POWER_LIMIT_MA`(8000), `WS2812_OPEN_DRAIN` |
+| `Core/Inc/ws2812.h` | `WS2812_ARM_STRIPS`(1), `WS2812_LEDS_PER_STRIP`(45), `WS2812_ARM_PARALLEL`(2), `WS2812_RING_LEDS`, `WS2812_MAX_BRIGHTNESS`(128), `WS2812_ARM_LIMIT_MA`(3500), `WS2812_RING_LIMIT_MA`(1800), `WS2812_POWER_LIMIT_MA`(8000), `WS2812_OPEN_DRAIN` |
 | `Core/Inc/fx.h` | 게이지 경로(`FX_ARM_SEQUENTIAL`, `FX_ARM_SERPENTINE`), 충전·유지·방전 시간, 임계값, 색, 아크 리액터 링 크기(`FX_RING_SIZES`)와 충격파 임계값 |
 | `Core/Inc/emg_input.h` | `EMG_DEADBAND_MV`, `EMG_FULL_SCALE_MV`, `EMG_SMOOTH_MS`, `EMG_REST_CAL_MS` |
 | `Core/Inc/pmmg_light.h` | `PMMG_LIGHT_CHANNEL`(0 = J1), `PMMG_PRESSURE_SIGN`, 심박 검출: `PMMG_PULSE_MIN_PA`(3 Pa / 50 ms), `PMMG_PULSE_THRESHOLD`, `PMMG_BPM_MIN`/`MAX`(35–180), `PMMG_PULSE_LOST_MS` |

@@ -228,6 +228,9 @@ bool ws2812_show(void)
             sum += level_lut[px[i]];
         }
         uint32_t ma = sum * MA_PER_CHANNEL / 255U;
+        if (o != (uint32_t)WS2812_RING) {
+            ma *= WS2812_ARM_PARALLEL; /* Parallel strips draw the same current each. */
+        }
         factors[o] = 256U;
         if (ma > limit_ma[o]) {
             factors[o] = limit_ma[o] * 256U / ma;
