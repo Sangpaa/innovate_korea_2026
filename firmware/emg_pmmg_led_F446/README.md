@@ -23,7 +23,7 @@ make WS2812_ARM_PARALLEL=1        # 팔당 병렬 줄 수 변경 (기본 2)
 | 기능 | Nucleo 핀 | 연결 |
 |---|---|---|
 | EMG envelope 입력 | A0 (PA0) 왼팔, A1 (PA1) 오른팔 | PSL-iEMG2 Ch2. **0–3.3 V만 허용**한다. 보드 전원은 Nucleo 5V. |
-| WS2812 데이터 | D10 (PB6) 왼팔, PB7 (CN7-21) 오른팔, D15 (PB8) 링 | Pixel Shifter 2개(PS1: PB6→D5, PB7→C5 / PS2: PB8→D5, V = 3V3) → 줄마다 330 Ω → 팔 줄 1·줄 2 DIN(병렬) / 바깥 링(24구) DIN. 예비: 74HCT125N(5 V 전원) |
+| WS2812 데이터 | D10 (PB6) 왼팔, PB7 (CN7-21) 오른팔, D15 (PB8) 링 | Pixel Shifter 2개(PS1: PB6→D5, PB7→C5 / PS2: PB8→D5, CLK→G, V = 3V3) → 줄마다 330 Ω → 팔 줄 1·줄 2 DIN(병렬) / 바깥 링(24구) DIN. 예비: 74HCT125N(5 V 전원) |
 | pMMG 센서 | Nucleo 핀에 직접 | 레퍼런스와 같다 (SPI1/2/3). 단 J7 CS는 PC9 (F446RE에는 PB11이 없다). J1 = D3 SCK, D5 MISO, D4 MOSI, PC8 CS, 3V3, GND. J12(D6 PB10)는 XM 동기 입력이다. |
 | PC 스트림 | USB (ST-LINK VCP) | 921600 8N1, 레퍼런스 v5 패킷 형식 그대로 |
 

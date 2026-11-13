@@ -317,6 +317,7 @@ button.plain { font: inherit; padding: 8px 14px; border-radius: 6px; cursor: poi
         <text class="ts" x="686" y="584">V</text>
         <text class="ts" x="686" y="617">DAT</text>
         <text class="ts" x="686" y="654">G</text>
+        <text class="ts" x="686" y="637">CLK</text>
         <text class="ts" x="769" y="617" text-anchor="end">D5</text>
         <path class="w ws" d="M640 200 H680"/>
         <path class="w ws" d="M640 410 H680"/>
@@ -327,6 +328,9 @@ button.plain { font: inherit; padding: 8px 14px; border-radius: 6px; cursor: poi
         <text class="t" x="630" y="244" text-anchor="end">3V3 · CN6-4</text>
         <path class="w wg" d="M680 380 H652 V690"/>
         <path class="w wg" d="M680 650 H652"/>
+        <!-- PS2 CLK input tied to G so the unused buffer input does not float -->
+        <path class="w wg" d="M680 633 H667 V650"/>
+        <circle class="dg" cx="667" cy="650" r="3.6"/>
         <circle class="dg" cx="652" cy="650" r="3.6"/>
         <circle class="dg" cx="652" cy="690" r="3.6"/>
 
@@ -564,7 +568,8 @@ UB459 C1/C2: 20 V 5 A (100 W)
             <tr><td class="pin">PS1</td><td class="pin">DAT → D5</td><td>PB6 → R1a → 왼팔 줄 1 DIN, R1b → 줄 2 DIN</td></tr>
             <tr><td class="pin">PS1</td><td class="pin">CLK → C5</td><td>PB7 → R2a → 오른팔 줄 1 DIN, R2b → 줄 2 DIN</td></tr>
             <tr><td class="pin">PS2</td><td class="pin">DAT → D5</td><td>PB8 → R3 → 바깥 링(24구) DIN</td></tr>
-            <tr><td class="pin">PS2</td><td class="pin">CLK, C5, !D5</td><td>연결하지 않음</td></tr>
+            <tr><td class="pin">PS2</td><td class="pin">CLK</td><td>같은 모듈의 G에 연결. 쓰지 않는 입력이 떠 있지 않게 함</td></tr>
+            <tr><td class="pin">PS2</td><td class="pin">C5, !D5</td><td>연결하지 않음 (출력)</td></tr>
           </tbody>
         </table>
       </div>
@@ -596,6 +601,7 @@ UB459 C1/C2: 20 V 5 A (100 W)
         <li>LED 전류는 전원 단자로 바로 돌아가게 배선합니다. Nucleo GND를 거치지 않게 합니다.</li>
         <li>센서 VDD가 <b>3V3</b>에 연결됐는지 확인합니다.</li>
         <li>C1–C3(1000 µF, 16 V 전해) 극성을 확인합니다. 긴 다리(+)가 5 V입니다.</li>
+        <li>PS2의 CLK 단자가 G에 연결됐는지 확인합니다.</li>
         <li>WS2812 줄의 화살표 방향(DIN → DOUT)을 확인합니다. 팔마다 두 줄의 DIN이 각각 저항을 거쳐 같은 Pixel Shifter 단자에 연결됐는지 확인합니다.</li>
         <li>처음에는 한 팔의 줄 1개만 연결해서 시험합니다. 흰색으로 켜고 줄 끝이 붉거나 어두운지 봅니다. 그다음 같은 팔의 줄 2를 연결해 두 줄이 같은 화면을 보여 주는지 봅니다.</li>
         <li>두 PSL-iEMG2의 Ch2 전압을 멀티미터로 잽니다. 힘을 뺄 때와 최대로 줄 때 모두 0–3.3 V 안이어야 합니다.</li>
